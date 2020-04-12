@@ -79,7 +79,7 @@ void mergeSort(keytype* A, int l, int r)
     { 
         // Same as (l+r)/2, but avoids overflow for 
         // large l and h 
-        int m = l+(r-l)>>1; 
+        int m = l+(r-l)/2; 
   
         // Sort first and second halves 
         mergeSort(A, l, m); 
