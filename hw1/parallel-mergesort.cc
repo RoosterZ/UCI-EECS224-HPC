@@ -25,7 +25,7 @@ void merge(keytype* A, int l, int m, int r)
     // int L[n1], R[n2]; 
     keytype* L = newKeys(n1);
     keytype* R = newKeys(n2);
-    keytype L[]
+    
   
     /* Copy data to temp arrays L[] and R[] */
     for (i = 0; i < n1; i++) 
