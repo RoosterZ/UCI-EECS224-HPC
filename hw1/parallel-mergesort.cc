@@ -22,8 +22,11 @@ void merge(keytype* A, int l, int m, int r)
     int n2 =  r - m; 
   
 
-    keytype L[n1];
-    keytype R[n2];
+    // keytype L[n1];
+    // keytype R[n2];
+
+    std::vector<keytype> L(n1);
+    std::vector<keytype> R(n2);    
     
   
     /* Copy data to temp arrays L[] and R[] */
