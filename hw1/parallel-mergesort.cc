@@ -85,12 +85,13 @@ void mergeSort(keytype* A, int l, int r)
         int m = l+(r-l)/2; 
   
         // Sort first and second halves 
-        #pragma omp task
+        #pragma omp taskgroup
         {
+        #pragma omp task shared(A)
         mergeSort(A, l, m); 
         mergeSort(A, m+1, r); 
         }
-        #pragma omp taskwait
+        // #pragma omp taskwait
         merge(A, l, m, r); 
     } 
 } 

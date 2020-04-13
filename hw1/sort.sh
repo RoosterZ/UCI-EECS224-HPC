@@ -1,5 +1,5 @@
 #!/bin/bash
-#$ -N quicksort
+#$ -N mergesort
 #$ -q class 
 #$ -pe openmp 8
 
