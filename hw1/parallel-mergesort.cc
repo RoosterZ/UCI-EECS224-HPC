@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <omp.h>
 #include "sort.hh"
 
 // Merges two subarrays of arr[]. 
@@ -21,10 +21,6 @@ void merge(keytype* A, int l, int m, int r)
     int n1 = m - l + 1; 
     int n2 =  r - m; 
   
-    /* create temp arrays */
-    // int L[n1], R[n2]; 
-    // keytype* L = newKeys(n1);
-    // keytype* R = newKeys(n2);
 
     keytype L[n1];
     keytype R[n2];
@@ -74,37 +70,6 @@ void merge(keytype* A, int l, int m, int r)
     } 
 } 
 
-
-void merge1(keytype* A, int p, int q, int r)
-{
-    // std::vector<keytype> l(A.begin() + p, a.begin() + q + 1);
-    // std::vector<keytype> ri(a.begin() + q + 1, a.begin() + r + 1);
-    
-
-    int n1 = q - p + 1;
-    int n2 = r - q;
-    keytype l[n1];
-    keytype ri[n2];
-
-    int i, j; 
-    i = j = 0;
-
-    while (i < n1 && j < n2) {
-        if (l[i] < ri[j]) {
-            A[p++] = l[i++];
-        } else {
-            A[p++] = ri[j++];
-        }
-    }
-
-    while (i < n1) {
-        A[p++] = l[i++];
-    }
-
-    while (j < n2) {
-        A[p++] = ri[j++];
-    }
-}
   
 /* l is for left index and r is right index of the 
    sub-array of arr to be sorted */
@@ -117,10 +82,10 @@ void mergeSort(keytype* A, int l, int r)
         int m = l+(r-l)/2; 
   
         // Sort first and second halves 
+        #pragma omp task
         mergeSort(A, l, m); 
         mergeSort(A, m+1, r); 
-  
-        //merge(A, l, m, r);
+        #pragma omp taskwait
         merge(A, l, m, r); 
     } 
 } 
@@ -129,6 +94,8 @@ void mergeSort(keytype* A, int l, int r)
 void mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
+  #pragma omp parallel
+  #pragma omp single nowait
   mergeSort(A, 0, N-1);
   
 }
