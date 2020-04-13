@@ -101,8 +101,8 @@ void mergeSort(keytype* A, int l, int r)
 void mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
-  #pragma omp parallel
-  #pragma omp single nowait
+//   #pragma omp parallel
+//   #pragma omp single nowait
   mergeSort(A, 0, N-1);
   
 }
