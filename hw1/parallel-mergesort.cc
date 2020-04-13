@@ -86,8 +86,10 @@ void mergeSort(keytype* A, int l, int r)
   
         // Sort first and second halves 
         #pragma omp task
+        {
         mergeSort(A, l, m); 
         mergeSort(A, m+1, r); 
+        }
         #pragma omp taskwait
         merge(A, l, m, r); 
     } 
