@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <omp.h>
 #include "sort.hh"
-using namespace std;
+#include <vector>
 // Merges two subarrays of arr[]. 
 // First subarray is arr[l..m] 
 // Second subarray is arr[m+1..r] 
@@ -25,8 +25,8 @@ void merge(keytype* A, int l, int m, int r)
     // keytype L[n1];
     // keytype R[n2];
 
-    std::vector<keytype> L;
-    std::vector<keytype> R;
+    std::vector<keytype> L(n1);
+    std::vector<keytype> R(n2);
     
   
     /* Copy data to temp arrays L[] and R[] */
