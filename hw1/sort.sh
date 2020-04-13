@@ -13,5 +13,5 @@ module load intel-parallel-studio-xe/15.0.3
 export OMP_NUM_THREADS=8
 
 # Run quicksort on 10 million elements
-./mergesort 10000000
+./mergesort2 10000000
 
