@@ -23,8 +23,11 @@ void merge(keytype* A, int l, int m, int r)
   
     /* create temp arrays */
     // int L[n1], R[n2]; 
-    keytype* L = newKeys(n1);
-    keytype* R = newKeys(n2);
+    // keytype* L = newKeys(n1);
+    // keytype* R = newKeys(n2);
+
+    keytype L[n1];
+    keytype R[n2];
     
   
     /* Copy data to temp arrays L[] and R[] */
@@ -83,7 +86,8 @@ void merge1(keytype* A, int p, int q, int r)
     keytype l[n1];
     keytype ri[n2];
 
-    int i, j; i = j = 0;
+    int i, j; 
+    i = j = 0;
 
     while (i < n1 && j < n2) {
         if (l[i] < ri[j]) {
@@ -117,7 +121,7 @@ void mergeSort(keytype* A, int l, int r)
         mergeSort(A, m+1, r); 
   
         //merge(A, l, m, r);
-        merge1(A, l, m, r); 
+        merge(A, l, m, r); 
     } 
 } 
 
