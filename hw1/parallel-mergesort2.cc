@@ -44,13 +44,13 @@ void mergeSort(keytype* X, int n, keytype* tmp)
 {
    if (n < 2) return;
 
-//    #pragma omp task firstprivate (X, n, tmp)
+   #pragma omp task firstprivate (X, n, tmp)
    mergesort(X, n/2, tmp);
 
-//    #pragma omp task firstprivate (X, n, tmp)
+   #pragma omp task firstprivate (X, n, tmp)
    mergesort(X+(n/2), n-(n/2), tmp);
  
-//    #pragma omp taskwait
+   #pragma omp taskwait
 
     /* merge sorted halves into sorted list */
    merge(X, n, tmp);
@@ -62,11 +62,11 @@ void mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
     keytype* tmp = newKeys(N);
-//   #pragma omp parallel
-//   #pragma omp single nowait
-
-    mergeSort(A, N, tmp);
-  
+    #pragma omp parallel
+    {
+        #pragma omp single
+        mergeSort(A, N, tmp);
+    }
 }
 
 /* eof */

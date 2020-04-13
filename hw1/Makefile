@@ -29,6 +29,6 @@ mergesort2: driver.o sort.o parallel-mergesort2.o
 	$(CC) $(CFLAGS) $(COPTFLAGS) -o $@ -c $<
 
 clean:
-	rm -f core *.o *~ quicksort mergesort
+	rm -f core *.o *~ quicksort* mergesort*
 
 # eof
