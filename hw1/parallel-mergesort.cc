@@ -43,14 +43,14 @@ void merge(keytype* A, int l, int m, int r)
     k = l; // Initial index of merged subarray 
     while (i < n1 && j < n2) 
     { 
-        if (L[i] <= R[j]) 
+        if (A[l+i] <= A[m+j+1]) 
         { 
-            tmp[k] = L[i]; 
+            tmp[k] = A[l+i]; 
             i++; 
         } 
         else
         { 
-            tmp[k] = R[j]; 
+            tmp[k] = A[m+j+1]; 
             j++; 
         } 
         k++; 
@@ -60,7 +60,7 @@ void merge(keytype* A, int l, int m, int r)
        are any */
     while (i < n1) 
     { 
-        tmp[k] = L[i]; 
+        tmp[k] = A[l+i]; 
         i++; 
         k++; 
     } 
@@ -69,7 +69,7 @@ void merge(keytype* A, int l, int m, int r)
        are any */
     while (j < n2) 
     { 
-        tmp[k] = R[j]; 
+        tmp[k] = A[m+j+1]; 
         j++; 
         k++; 
     }
