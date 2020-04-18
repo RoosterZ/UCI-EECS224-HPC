@@ -40,7 +40,7 @@ void merge(keytype* A, int l, int m, int r)
     /* Merge the temp arrays back into arr[l..r]*/
     i = 0; // Initial index of first subarray 
     j = 0; // Initial index of second subarray 
-    k = l; // Initial index of merged subarray 
+    k = 0; // Initial index of merged subarray 
     while (i < n1 && j < n2) 
     { 
         if (A[l+i] <= A[m+j+1]) 
