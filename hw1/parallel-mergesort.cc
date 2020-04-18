@@ -85,15 +85,13 @@ void mergeSort(keytype* A, int l, int r)
         int m = l+(r-l)/2; 
   
         // Sort first and second halves 
-        #pragma omp parallel sections
-        {
-        #pragma omp section
+
         mergeSort(A, l, m);
-        #pragma omp section 
+
         mergeSort(A, m+1, r); 
-        }
+
         // #pragma omp taskwait
-        merge(A, l, m, r); 
+        merge(A, l, m, r);
     } 
 } 
 
