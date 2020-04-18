@@ -25,15 +25,17 @@ void merge(keytype* A, int l, int m, int r)
     // keytype L[n1];
     // keytype R[n2];
 
-    std::vector<keytype> L(n1);
-    std::vector<keytype> R(n2);
+    // std::vector<keytype> L(n1);
+    // std::vector<keytype> R(n2);
+
+    keytype* tmp = new keytype[r-l+1];
     
   
     /* Copy data to temp arrays L[] and R[] */
-    for (i = 0; i < n1; i++) 
-        L[i] = A[l + i]; 
-    for (j = 0; j < n2; j++) 
-        R[j] = A[m + 1+ j]; 
+    // for (i = 0; i < n1; i++) 
+    //     L[i] = A[l + i]; 
+    // for (j = 0; j < n2; j++) 
+    //     R[j] = A[m + 1+ j]; 
   
     /* Merge the temp arrays back into arr[l..r]*/
     i = 0; // Initial index of first subarray 
@@ -43,12 +45,12 @@ void merge(keytype* A, int l, int m, int r)
     { 
         if (L[i] <= R[j]) 
         { 
-            A[k] = L[i]; 
+            tmp[k] = L[i]; 
             i++; 
         } 
         else
         { 
-            A[k] = R[j]; 
+            tmp[k] = R[j]; 
             j++; 
         } 
         k++; 
@@ -58,7 +60,7 @@ void merge(keytype* A, int l, int m, int r)
        are any */
     while (i < n1) 
     { 
-        A[k] = L[i]; 
+        tmp[k] = L[i]; 
         i++; 
         k++; 
     } 
@@ -67,10 +69,12 @@ void merge(keytype* A, int l, int m, int r)
        are any */
     while (j < n2) 
     { 
-        A[k] = R[j]; 
+        tmp[k] = R[j]; 
         j++; 
         k++; 
-    } 
+    }
+    memcpy(A+l,tmp,(r-l+1)*sizeof(keytype));
+    delete[] tmp;
 } 
 
   
