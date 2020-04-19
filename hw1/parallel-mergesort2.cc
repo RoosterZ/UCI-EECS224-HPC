@@ -49,12 +49,21 @@ void merge(keytype* A, int N, keytype* tmp) {
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
-   #pragma omp task
-   mergeSort(A, N/2, tmp);
-   #pragma omp task
-   mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
-    /* merge sorted halves into sorted list */
-   #pragma omp taskwait
+   if (N > 1000){
+      #pragma omp task
+      mergeSort(A, N/2, tmp);
+      #pragma omp task
+      mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
+      /* merge sorted halves into sorted list */
+      #pragma omp taskwait
+   }
+   else{
+
+      mergeSort(A, N/2, tmp);
+
+      mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
+
+   }
    merge(A, N, tmp);
 }
 
