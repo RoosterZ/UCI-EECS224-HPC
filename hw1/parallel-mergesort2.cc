@@ -120,7 +120,7 @@ void Pmerge(keytype* A, int N, keytype* tmp){
 }
 
 void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (a+b < 2000){
+   if (a+b < PAR_TH){
       merge2(A, B, a, b, tmp);
    }
    else{
