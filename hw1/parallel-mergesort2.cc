@@ -15,39 +15,44 @@
 #include <cstring>
 
 
-void merge(keytype* X, int n, keytype* tmp) {
+void merge(keytype* A, int N, keytype* tmp) {
    int i = 0;
-   int j = n/2;
+   int j = N/2;
    int ti = 0;
 
-   while (i<n/2 && j<n) {
-      if (X[i] < X[j]) {
-         tmp[ti] = X[i];
-         ti++; i++;
-      } else {
-         tmp[ti] = X[j];
-         ti++; j++;
+   while (i < N/2 && j < N) {
+      if (A[i] < A[j]) {
+         tmp[ti] = A[i];
+         ti++; 
+         i++;
+      } 
+      else {
+         tmp[ti] = A[j];
+         ti++; 
+         j++;
       }
    }
-   while (i<n/2) { /* finish up lower half */
-      tmp[ti] = X[i];
-      ti++; i++;
+   while (i < N/2) { /* finish up lower half */
+      tmp[ti] = A[i];
+      ti++; 
+      i++;
    }
-   while (j<n) { /* finish up upper half */
-      tmp[ti] = X[j];
-      ti++; j++;
+   while (j < N) { /* finish up upper half */
+      tmp[ti] = A[j];
+      ti++; 
+      j++;
    }
-   memcpy(X, tmp, n*sizeof(keytype));
+   memcpy(A, tmp, N*sizeof(keytype));
 
 } // end of merge()
 
-void mergeSort(keytype* X, int n, keytype* tmp)
+void mergeSort(keytype* A, int N, keytype* tmp)
 {
-   if (n < 2) return;
-   mergeSort(X, n/2, tmp);
-   mergeSort(X+(n/2), n-(n/2), tmp);
+   if (N < 2) return;
+   mergeSort(X, N/2, tmp);
+   mergeSort(X+(N/2), N-(N/2), tmp);
     /* merge sorted halves into sorted list */
-   merge(X, n, tmp);
+   merge(X, N, tmp);
 }
 
 
