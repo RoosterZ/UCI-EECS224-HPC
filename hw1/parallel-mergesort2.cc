@@ -114,10 +114,11 @@ void Pmerge(keytype* A, int N, keytype* tmp){
    #pragma omp task
    merge2(A, B, a1, b1, tmp);
    merge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
-
-   
    #pragma omp taskwait
-   memcpy(A, tmp, N*sizeof(keytype));   
+   #pragma omp task
+   memcpy(A, tmp, (a1+b1)*sizeof(keytype));
+   memcpy(A+a1+b1, tmp+a1+b1, (a2+b2)*sizeof(keytype));
+   #pragma omp taskwait
 
 }
 
@@ -139,7 +140,7 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
-   if(N > 4000)
+   if(N > 1000)
    //if(false)
    {
       Pmerge(A, N, tmp);
