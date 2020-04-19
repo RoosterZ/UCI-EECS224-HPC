@@ -49,10 +49,10 @@ void merge(keytype* A, int N, keytype* tmp) {
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
-   mergeSort(X, N/2, tmp);
-   mergeSort(X+(N/2), N-(N/2), tmp);
+   mergeSort(A, N/2, tmp);
+   mergeSort(A+(N/2), N-(N/2), tmp);
     /* merge sorted halves into sorted list */
-   merge(X, N, tmp);
+   merge(A, N, tmp);
 }
 
 
