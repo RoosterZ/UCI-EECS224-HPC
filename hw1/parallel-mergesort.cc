@@ -15,7 +15,7 @@
 // Merges two subarrays of arr[]. 
 // First subarray is arr[l..m] 
 // Second subarray is arr[m+1..r] 
-void merge(keytype* A, int l, int m, int r) 
+keytype* merge(keytype* A, int l, int m, int r) 
 { 
     int i, j, k; 
     int n1 = m - l + 1; 
@@ -73,8 +73,9 @@ void merge(keytype* A, int l, int m, int r)
         j++; 
         k++; 
     }
-    memcpy(A+l,tmp,(r-l+1)*sizeof(keytype));
-    delete[] tmp;
+    return tmp;
+    //memcpy(A+l,tmp,(r-l+1)*sizeof(keytype));
+    //delete[] tmp;
 } 
 
   
@@ -95,7 +96,9 @@ void mergeSort(keytype* A, int l, int r)
         mergeSort(A, m+1, r); 
 
         // #pragma omp taskwait
-        merge(A, l, m, r);
+        keytype* temp = merge(A, l, m, r);
+        memcpy(A+l,temp,(r-l+1)*sizeof(keytype));
+        delete[] temp;       
     } 
 } 
 
