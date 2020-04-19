@@ -100,6 +100,7 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 } // end of merge()
 
 void Pmerge(keytype* A, int N, keytype* tmp){
+
    int a = N/2, b = N - N/2;
    keytype* B = A + a;
    int midA = a / 2;
@@ -115,10 +116,28 @@ void Pmerge(keytype* A, int N, keytype* tmp){
    merge2(A, B, a1, b1, tmp);
    merge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
    #pragma omp taskwait
-   #pragma omp task
-   memcpy(A, tmp, (a1+b1)*sizeof(keytype));
-   memcpy(A+a1+b1, tmp+a1+b1, (a2+b2)*sizeof(keytype));
-   #pragma omp taskwait
+   memcpy(A, tmp, N * sizeof(keytype));
+}
+
+void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
+   if (a+b < PAR_TH){
+      merge2(A, B, a, b, tmp);
+   }
+   else{
+
+      int midA = a / 2;
+      int midB = binarySearch(B, b, A[midA]);
+      int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
+      if (midB == b - 1 && B[midB] <= A[midA]){
+         b1 = b;
+         b2 = 0;
+      }
+      #pragma omp task
+      Pmerge2(A, B, a1, b1, tmp);
+      #pragma omp task
+      Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
+      #pragma omp taskwait
+   }
 
 }
 
@@ -140,14 +159,7 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
-   if(N > 1000)
-   //if(false)
-   {
-      Pmerge(A, N, tmp);
-   }
-   else{
-      merge(A, N, tmp);
-   }
+   Pmerge2(A, A+(N/2), N/2, N-N/2, tmp);
 }
 
 
