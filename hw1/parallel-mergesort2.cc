@@ -20,6 +20,7 @@ int binarySearch(keytype* A, int N, int target)
 { 
    
    int l = 0, r = N - 1;
+   int mid = 0;
    while (r > l){
       mid = l + (r - l) / 2;
       if (A[mid] <= target){
@@ -100,20 +101,20 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 } // end of merge()
 
-void Pmerge(keytype* A, int N, keytype* tmp){
-   int a = N/2, b = N - N/2;
-   keytype* B = A + a;
-   int midA = a / 2;
-   int midB = binarySearch(B, b, A[midA]);
-   int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
-   if (midB == b - 1 && B[midB] <= A[midA]){
-      b1 = b;
-      b2 = 0;
-   }
-   keytype* A1 = A, A2 = A + midA, B1 = B, B2 = 
-   merge(A, B, )
+// void Pmerge(keytype* A, int N, keytype* tmp){
+//    int a = N/2, b = N - N/2;
+//    keytype* B = A + a;
+//    int midA = a / 2;
+//    int midB = binarySearch(B, b, A[midA]);
+//    int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
+//    if (midB == b - 1 && B[midB] <= A[midA]){
+//       b1 = b;
+//       b2 = 0;
+//    }
+//    // keytype* A1 = A, A2 = A + midA, B1 = B, B2 = 
+//    merge(A, B, )
 
-}
+// }
 
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
