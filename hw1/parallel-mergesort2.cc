@@ -50,7 +50,7 @@ void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
    mergeSort(A, N/2, tmp);
-   mergeSort(A+(N/2), N-(N/2), tmp);
+   mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
     /* merge sorted halves into sorted list */
    merge(A, N, tmp);
 }
