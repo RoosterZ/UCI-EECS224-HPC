@@ -15,7 +15,7 @@
 // Merges two subarrays of arr[]. 
 // First subarray is arr[l..m] 
 // Second subarray is arr[m+1..r] 
-keytype* merge(keytype* A, int l, int m, int r) 
+void merge(keytype* A, int l, int m, int r) 
 { 
     int i, j, k; 
     int n1 = m - l + 1; 
@@ -45,37 +45,36 @@ keytype* merge(keytype* A, int l, int m, int r)
     { 
         if (A[l+i] <= A[m+j+1]) 
         { 
-            tmp[k] = A[l+i]; 
-            i++; 
+            tmp[k++] = A[l+i++]; 
+            //i++; 
         } 
         else
         { 
-            tmp[k] = A[m+j+1]; 
-            j++; 
+            tmp[k++] = A[m+ j++ +1]; 
+            //j++; 
         } 
-        k++; 
+        //k++; 
     } 
   
     /* Copy the remaining elements of L[], if there 
        are any */
     while (i < n1) 
     { 
-        tmp[k] = A[l+i]; 
-        i++; 
-        k++; 
+        tmp[k++] = A[l+i++]; 
+        // i++; 
+        // k++; 
     } 
   
     /* Copy the remaining elements of R[], if there 
        are any */
     while (j < n2) 
     { 
-        tmp[k] = A[m+j+1]; 
-        j++; 
-        k++; 
+        tmp[k++] = A[m+ j++ +1]; 
+        // j++; 
+        // k++; 
     }
-    return tmp;
-    //memcpy(A+l,tmp,(r-l+1)*sizeof(keytype));
-    //delete[] tmp;
+    memcpy(A+l,tmp,(r-l+1)*sizeof(keytype));
+    delete[] tmp;
 } 
 
   
@@ -96,9 +95,7 @@ void mergeSort(keytype* A, int l, int r)
         mergeSort(A, m+1, r); 
 
         // #pragma omp taskwait
-        keytype* temp = merge(A, l, m, r);
-        memcpy(A+l,temp,(r-l+1)*sizeof(keytype));
-        delete[] temp;       
+        merge(A, l, m, r);
     } 
 } 
 
