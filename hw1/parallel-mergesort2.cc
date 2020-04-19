@@ -110,10 +110,12 @@ void Pmerge(keytype* A, int N, keytype* tmp){
       b2 = 0;
    }
    // keytype* A1 = A, A2 = A + midA, B1 = B, B2 = 
+
    #pragma omp task
    merge2(A, B, a1, b1, tmp);
-   #pragma omp task
    merge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
+
+   
    #pragma omp taskwait
    memcpy(A, tmp, N*sizeof(keytype));   
 
