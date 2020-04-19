@@ -137,7 +137,9 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
-   if(N > PAR_TH){
+   //if(N > PAR_TH){
+   if(false)
+   {
       Pmerge(A, N, tmp);
    }
    else{
