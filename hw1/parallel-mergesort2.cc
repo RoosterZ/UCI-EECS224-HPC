@@ -101,20 +101,22 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 } // end of merge()
 
-// void Pmerge(keytype* A, int N, keytype* tmp){
-//    int a = N/2, b = N - N/2;
-//    keytype* B = A + a;
-//    int midA = a / 2;
-//    int midB = binarySearch(B, b, A[midA]);
-//    int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
-//    if (midB == b - 1 && B[midB] <= A[midA]){
-//       b1 = b;
-//       b2 = 0;
-//    }
-//    // keytype* A1 = A, A2 = A + midA, B1 = B, B2 = 
-//    merge(A, B, )
+void Pmerge(keytype* A, int N, keytype* tmp){
+   int a = N/2, b = N - N/2;
+   keytype* B = A + a;
+   int midA = a / 2;
+   int midB = binarySearch(B, b, A[midA]);
+   int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
+   if (midB == b - 1 && B[midB] <= A[midA]){
+      b1 = b;
+      b2 = 0;
+   }
+   // keytype* A1 = A, A2 = A + midA, B1 = B, B2 = 
+   merge2(A, B, a1, b1, tmp);
+   merge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
+   memcpy(A, tmp, N*sizeof(keytype));   
 
-// }
+}
 
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
@@ -134,7 +136,12 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
-   merge(A, N, tmp);
+   if(N > PAR_TH){
+      Pmerge(A, N, tmp);
+   }
+   else{
+      merge(A, N, tmp);
+   }
 }
 
 
