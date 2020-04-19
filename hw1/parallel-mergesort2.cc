@@ -14,8 +14,29 @@
 #include <vector>
 #include <cstring>
 
+#define PAR_TH 1000
+
+int binarySearch(keytype* A, int N, int target) 
+{ 
+   
+   int l = 0, r = N - 1;
+   while (r > l){
+      mid = l + (r - l) / 2;
+      if (A[mid] <= target){
+         l = mid + 1;
+      }
+      else {
+         r = mid;
+      }
+   }
+   return l;
+} 
+
+
 
 void merge(keytype* A, int N, keytype* tmp) {
+   
+   
    int i = 0;
    int j = N/2;
    int ti = 0;
@@ -46,10 +67,58 @@ void merge(keytype* A, int N, keytype* tmp) {
 
 } // end of merge()
 
+void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
+   
+   
+   int i = 0;
+   int j = 0;
+   int ti = 0;
+
+   while (i < N1 && j < N2) {
+      if (A1[i] < A2[j]) {
+         tmp[ti] = A1[i];
+         ti++; 
+         i++;
+      } 
+      else {
+         tmp[ti] = A2[j];
+         ti++; 
+         j++;
+      }
+   }
+   while (i < N1) { /* finish up lower half */
+      tmp[ti] = A1[i];
+      ti++; 
+      i++;
+   }
+   while (j < N2) { /* finish up upper half */
+      tmp[ti] = A2[j];
+      ti++; 
+      j++;
+   }
+   // memcpy(A, tmp, N*sizeof(keytype));
+
+} // end of merge()
+
+void Pmerge(keytype* A, int N, keytype* tmp){
+   int a = N/2, b = N - N/2;
+   keytype* B = A + a;
+   int midA = a / 2;
+   int midB = binarySearch(B, b, A[midA]);
+   int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
+   if (midB == b - 1 && B[midB] <= A[midA]){
+      b1 = b;
+      b2 = 0;
+   }
+   keytype* A1 = A, A2 = A + midA, B1 = B, B2 = 
+   merge(A, B, )
+
+}
+
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
-   if (N > 1000){
+   if (N > PAR_TH){
       #pragma omp task
       mergeSort(A, N/2, tmp);
       #pragma omp task
