@@ -135,17 +135,13 @@ void mergeSort(keytype* A, int N)
 
 
    keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
-   memcpy(A, tmp, N);
+   memcpy(A, tmp, sizeof(keytype) * N);
 }
 
 
 void mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
-
-
-
-
       mergeSort(A, N);
 
 }
