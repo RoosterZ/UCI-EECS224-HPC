@@ -75,7 +75,6 @@ keytype *Pmerge(keytype* A, keytype* B, int a, int b) {
       int i = 0;
       int j = 0;
       int ti = 0;
-
       while (i < a && j < b) {
          if (A[i] < B[j]) {
             rval[ti] = A[i];
@@ -107,13 +106,13 @@ keytype *Pmerge(keytype* A, keytype* B, int a, int b) {
          b1 = b;
          b2 = 0;
       }
-      keytype *tmp1, *tmp2;
-      #pragma omp task shared(tmp1)
+      keytype *tmp1=NULL, *tmp2=NULL;
+      #pragma omp task shared(tmp1,A,B,a1,b1)
       tmp1 = Pmerge(A, B, a1, b1);
       tmp2 = Pmerge(A+a1, B+b1, a2, b2);
 
       #pragma omp taskwait
-      #pragma omp task
+      #pragma omp task shared(a1, b1, rval, tmp1)
       memcpy(rval, tmp1, (a1+b1) * sizeof(keytype));
       memcpy(rval+(a1+b1), tmp2, (a2+b2) * sizeof(keytype));
       #pragma omp taskwait
@@ -138,9 +137,10 @@ void mergeSort(keytype* A, int N)
       sequentialSort(N, A);
    }
 
-   keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
+   keytype* tmp = Pmerge(A, A+(N/2), N/2, N-(N/2));
 
    memcpy(A, tmp, sizeof(keytype) * N);
+   delete[] tmp;
 }
 
 
