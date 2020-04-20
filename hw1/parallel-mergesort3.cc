@@ -14,7 +14,7 @@
 #include <vector>
 #include <cstring>
 
-#define PAR_TH 2000
+#define PAR_TH 1000
 
 int binarySearch(keytype* A, int N, int target) 
 { 
@@ -110,8 +110,6 @@ keytype *Pmerge(keytype* A, keytype* B, int a, int b) {
       keytype *tmp1, *tmp2;
       #pragma omp task shared(tmp1)
       tmp1 = Pmerge(A, B, a1, b1);
-      
-      #pragma omp task shared(tmp2)
       tmp2 = Pmerge(A+a1, B+b1, a2, b2);
 
       #pragma omp taskwait
@@ -140,7 +138,8 @@ void mergeSort(keytype* A, int N)
       sequentialSort(N, A);
    }
 
-   keytype* tmp = Pmerge(A, A+(N/2), N/2, N-(N/2));
+   keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
+
    memcpy(A, tmp, sizeof(keytype) * N);
 }
 
