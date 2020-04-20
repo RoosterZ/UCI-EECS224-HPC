@@ -156,6 +156,9 @@ void mySort (int N, keytype* A)
       #pragma omp single
       mergeSort(A, N, tmp);
    }
+   for(int i = 0; i < N; i++){
+      printf('%d', A[i]);
+   }
 }
 
 /* eof */
