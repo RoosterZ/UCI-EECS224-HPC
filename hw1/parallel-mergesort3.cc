@@ -112,7 +112,7 @@ keytype* Pmerge(keytype* A, keytype* B, int a, int b) {
       #pragma omp task
       keytype* tmp1 = Pmerge(A, B, a1, b1);
       #pragma omp task
-      keytype* tmp2 = Pmerge2(A+a1, B+b1, a2, b2);
+      keytype* tmp2 = Pmerge(A+a1, B+b1, a2, b2);
       #pragma omp taskwait
       memcpy(rval, tmp1, (a1+b1) * sizeof(keytype));
       memcpy(rval, tmp2, (a2+b2) * sizeof(keytype));
