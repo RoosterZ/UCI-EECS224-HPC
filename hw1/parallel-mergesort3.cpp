@@ -37,8 +37,8 @@ int binarySearch(keytype* A, int N, int target)
 
 keytype* merge(keytype* A, keytype* B, int a, int b) {
    
-   //keytype* rval = newKeys(a+b);
-   keytype* rval = new keytype[a+b]; 
+   keytype* rval = newKeys(a+b);
+
    int i = 0;
    int j = 0;
    int ti = 0;
@@ -143,7 +143,7 @@ void mergeSort(keytype* A, int N)
 void mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
-      mergeSort(A, N);
+    mergeSort(A, N);
 
 }
 
