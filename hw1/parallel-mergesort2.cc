@@ -141,7 +141,11 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
-   Pmerge2(A, A+(N/2), N/2, N-N/2, tmp);
+   #pragma omp parallel
+   {
+      #pragma omp single
+      Pmerge2(A, A+(N/2), N/2, N-N/2, tmp);
+   }
    memcpy(A, tmp, N * sizeof(keytype));
 }
 
