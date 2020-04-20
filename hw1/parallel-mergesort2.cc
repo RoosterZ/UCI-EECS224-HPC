@@ -103,7 +103,7 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 
 void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (a+b < 2000){
+   if (a+b < 4000){
    //if (true){
       merge2(A, B, a, b, tmp);
    }
@@ -118,6 +118,7 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
       }
       #pragma omp task
       Pmerge2(A, B, a1, b1, tmp);
+      #pragma omp task
       Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
       #pragma omp taskwait
       //memcpy(A, tmp, (a+b)*sizeof(keytype));
@@ -132,7 +133,7 @@ void mergeSort(keytype* A, int N, keytype* tmp)
    //if (false){
       #pragma omp task
       mergeSort(A, N/2, tmp);
-      //#pragma omp task
+      #pragma omp task
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
       /* merge sorted halves into sorted list */
       #pragma omp taskwait
