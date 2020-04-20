@@ -101,28 +101,28 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 
 
-void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (a+b < PAR_TH){
-      merge2(A, B, a, b, tmp);
-   }
-   else{
+// void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
+//    if (a+b < PAR_TH){
+//       merge2(A, B, a, b, tmp);
+//    }
+//    else{
 
-      int midA = a / 2;
-      int midB = binarySearch(B, b, A[midA]);
-      int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
-      if (midB == b - 1 && B[midB] <= A[midA]){
-         b1 = b;
-         b2 = 0;
-      }
-      #pragma omp task
-      Pmerge2(A, B, a1, b1, tmp);
-      #pragma omp task
-      Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
-      #pragma omp taskwait
-      //memcpy(A, tmp, sizeof(keytype)*(a+b));
-   }
+//       int midA = a / 2;
+//       int midB = binarySearch(B, b, A[midA]);
+//       int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
+//       if (midB == b - 1 && B[midB] <= A[midA]){
+//          b1 = b;
+//          b2 = 0;
+//       }
+//       #pragma omp task
+//       Pmerge2(A, B, a1, b1, tmp);
+//       #pragma omp task
+//       Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
+//       #pragma omp taskwait
+//       //memcpy(A, tmp, sizeof(keytype)*(a+b));
+//    }
 
-}
+// }
 
 void mergeSort(keytype* A, int N)
 {
@@ -134,7 +134,7 @@ void mergeSort(keytype* A, int N)
     /* merge sorted halves into sorted list */
 
 
-   keytype* tmp = merge(A, N/2, A+(N/2), N-(N/2));
+   keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
    memcpy(A, tmp, N);
 }
 
@@ -144,11 +144,10 @@ void mySort (int N, keytype* A)
   /* Lucky you, you get to start from scratch */
 
 
-   #pragma omp parallel
-   {
-      #pragma omp single
+
+
       mergeSort(A, N);
-   }
+
 }
 
 /* eof */
