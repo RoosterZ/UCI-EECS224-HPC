@@ -13,6 +13,7 @@
 #include "sort.hh"
 #include <vector>
 #include <cstring>
+#include <iostream>
 
 #define PAR_TH 1000
 
@@ -157,7 +158,7 @@ void mySort (int N, keytype* A)
       mergeSort(A, N, tmp);
    }
    for(int i = 0; i < N; i++){
-      printf('%d', A[i]);
+      std::cout>>A[i];
    }
 }
 
