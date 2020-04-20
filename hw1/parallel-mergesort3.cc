@@ -67,9 +67,60 @@ keytype* merge(keytype* A, keytype* B, int a, int b) {
    }
    return rval;
 
-} // end of merge()
+} 
 
+keytype* Pmerge(keytype* A, keytype* B, int a, int b) {
+   keytype* rval = newKeys(a+b);
+   if (a+b < PAR_TH){
+      
 
+      int i = 0;
+      int j = 0;
+      int ti = 0;
+
+      while (i < a && j < b) {
+         if (A[i] < B[j]) {
+            rval[ti] = A[i];
+            ti++; 
+            i++;
+         } 
+         else {
+            rval[ti] = B[j];
+            ti++; 
+            j++;
+         }
+      }
+      while (i < a) { /* finish up lower half */
+         rval[ti] = A[i];
+         ti++; 
+         i++;
+      }
+      while (j < b) { /* finish up upper half */
+         rval[ti] = B[j];
+         ti++; 
+         j++;
+      }
+   }
+   else{
+      int midA = a / 2;
+      int midB = binarySearch(B, b, A[midA]);
+      int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
+      if (midB == b - 1 && B[midB] <= A[midA]){
+         b1 = b;
+         b2 = 0;
+      }
+      #pragma omp task
+      keytype* tmp1 = Pmerge(A, B, a1, b1);
+      #pragma omp task
+      keytype* tmp2 = Pmerge2(A+a1, B+b1, a2, b2);
+      #pragma omp taskwait
+      memcpy(rval, tmp1, (a1+b1) * sizeof(keytype));
+      memcpy(rval, tmp2, (a2+b2) * sizeof(keytype));
+      
+   }
+   return rval;
+
+} 
 void mergeSort(keytype* A, int N)
 {
     if (N < 2) return;
@@ -85,7 +136,7 @@ void mergeSort(keytype* A, int N)
       sequentialSort(N, A);
    }
 
-   keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
+   keytype* tmp = Pmerge(A, A+(N/2), N/2, N-(N/2));
    memcpy(A, tmp, sizeof(keytype) * N);
 }
 
@@ -93,11 +144,11 @@ void mergeSort(keytype* A, int N)
 void mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
-    #pragma omp parallel
-    {
-        #pragma omp single
-        mergeSort(A, N);
-    }
+   #pragma omp parallel
+   {
+      #pragma omp single
+      mergeSort(A, N);
+   }
 }
 
 /* eof */
