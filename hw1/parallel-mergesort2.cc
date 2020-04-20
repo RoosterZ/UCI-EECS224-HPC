@@ -119,7 +119,7 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
       #pragma omp task
       Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
       #pragma omp taskwait
-      memcpy(A, tmp, a+b);
+      memcpy(A, tmp, sizeof(keytype)*(a+b));
    }
 
 }
