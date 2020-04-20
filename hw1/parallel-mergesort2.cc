@@ -158,7 +158,7 @@ void mySort (int N, keytype* A)
       mergeSort(A, N, tmp);
    }
    for(int i = 0; i < N; i++){
-      std::cout>>A[i];
+      std::cout << A[i];
    }
 }
 
