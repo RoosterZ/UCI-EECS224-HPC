@@ -128,12 +128,18 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 void mergeSort(keytype* A, int N)
 {
     if (N < 2) return;
-    #pragma omp task
-    mergeSort(A, N/2);
-    #pragma omp task
-    mergeSort(A+(N/2), N-(N/2));
-    /* merge sorted halves into sorted list */
-    #pragma omp taskwait
+    if (N > PAR_TH){
+      #pragma omp task
+      mergeSort(A, N/2);
+      #pragma omp task
+      mergeSort(A+(N/2), N-(N/2));
+      /* merge sorted halves into sorted list */
+      #pragma omp taskwait
+   }
+   else{
+      mergeSort(A, N/2);
+      mergeSort(A+(N/2), N-(N/2));
+   }
 
     keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
     memcpy(A, tmp, sizeof(keytype) * N);
