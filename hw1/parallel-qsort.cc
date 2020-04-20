@@ -51,14 +51,21 @@ void quickSort (int N, keytype* A)
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
     int n_le = partition (pivot, N, A);
+    #pragma omp task
     quickSort (n_le, A);
+    #pragma omp task
     quickSort (N-n_le, A + n_le);
+    #pragma omp taskwait
   }
 }
 
 void mySort (int N, keytype* A)
 {
-  quickSort (N, A);
+  #pragma omp parallel
+  {
+    #pragma omp single
+    quickSort (N, A);
+  }
 }
 
 /* eof */
