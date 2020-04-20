@@ -127,8 +127,8 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
-   //if (N > PAR_TH){
-   if (false){
+   if (N > PAR_TH){
+   //if (false){
       #pragma omp task
       mergeSort(A, N/2, tmp);
       #pragma omp task
@@ -137,9 +137,9 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       #pragma omp taskwait
    }
    else{
-
-      mergeSort(A, N/2, tmp);
-      mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
+      //sequentialSort(N, A);
+       mergeSort(A, N/2, tmp);
+       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
 
