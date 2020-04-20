@@ -38,7 +38,7 @@ int binarySearch(keytype* A, int N, int target)
 keytype* merge(keytype* A, keytype* B, int a, int b) {
    
    //keytype* rval = newKeys(a+b);
-   keytype rval[a+b]; 
+   keytype* rval = new keytype[a+b]; 
    int i = 0;
    int j = 0;
    int ti = 0;
