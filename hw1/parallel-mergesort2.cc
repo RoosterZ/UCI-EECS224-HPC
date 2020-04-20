@@ -103,7 +103,8 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 
 void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (a+b < 3000){
+   //if (a+b < 3000){
+   if (true){
       merge2(A, B, a, b, tmp);
    }
    else{
