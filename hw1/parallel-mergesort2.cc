@@ -103,7 +103,7 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 
 void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (a+b < 100){
+   if (a+b < 3000){
    //if (true){
       merge2(A, B, a, b, tmp);
    }
@@ -129,7 +129,7 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
-   if (N > 1000){
+   if (N > 8000){
    //if (false){
       #pragma omp task
       mergeSort(A, N/2, tmp);
