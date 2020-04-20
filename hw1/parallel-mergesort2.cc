@@ -159,7 +159,7 @@ void mySort (int N, keytype* A)
    }
    for(int i = 0; i < N; i++){
       std::cout << A[i];
-      std::cout << endl;
+      std::cout << std::endl;
    }
 }
 
