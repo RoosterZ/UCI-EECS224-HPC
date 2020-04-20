@@ -107,15 +107,15 @@ keytype *Pmerge(keytype* A, keytype* B, int a, int b) {
          b2 = 0;
       }
       keytype *tmp1=NULL, *tmp2=NULL;
-      #pragma omp task
+      #pragma omp task shared(tmp1)
       tmp1 = Pmerge(A, B, a1, b1);
       tmp2 = Pmerge(A+a1, B+b1, a2, b2);
 
-      #pragma omp taskwait
-      #pragma omp task
+      // #pragma omp taskwait
+      // #pragma omp task
       memcpy(rval, tmp1, (a1+b1) * sizeof(keytype));
       memcpy(rval+(a1+b1), tmp2, (a2+b2) * sizeof(keytype));
-      #pragma omp taskwait
+      // #pragma omp taskwait
       if (tmp1 != NULL) delete[] tmp1;
       if (tmp2 != NULL) delete[] tmp2;      
    }
