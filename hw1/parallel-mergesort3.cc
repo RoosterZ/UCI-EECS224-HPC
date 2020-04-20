@@ -69,7 +69,7 @@ keytype* merge(keytype* A, keytype* B, int a, int b) {
 
 } 
 
-keytype* Pmerge(keytype* A, keytype* B, int a, int b) {
+keytype *Pmerge(keytype* A, keytype* B, int a, int b) {
    keytype* rval = newKeys(a+b);
    if (a+b < PAR_TH){
       
@@ -109,7 +109,7 @@ keytype* Pmerge(keytype* A, keytype* B, int a, int b) {
          b1 = b;
          b2 = 0;
       }
-      keytype* tmp1, tmp2;
+      keytype *tmp1, *tmp2;
       #pragma omp task shared(tmp1, tmp2)
       tmp1 = Pmerge(A, B, a1, b1);
       #pragma omp task shared(tmp1, tmp2)
