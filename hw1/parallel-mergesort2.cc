@@ -129,7 +129,7 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
    if (N < 2) return;
-   if (N > 8000){
+   if (N > 20000){
    //if (false){
       #pragma omp task
       mergeSort(A, N/2, tmp);
