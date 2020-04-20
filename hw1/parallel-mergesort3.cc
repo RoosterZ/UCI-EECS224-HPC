@@ -82,7 +82,7 @@ void mergeSort(keytype* A, int N)
       #pragma omp taskwait
    }
    else{
-      sequentialSort(A, N);
+      sequentialSort(N, A);
    }
 
    keytype* tmp = merge(A, A+(N/2), N/2, N-(N/2));
