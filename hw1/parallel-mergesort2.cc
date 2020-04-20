@@ -68,7 +68,7 @@ void merge(keytype* A, int N, keytype* tmp) {
 
 } // end of merge()
 
-void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp, keytype* dest) {
+void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
    int i = 0;
    int j = 0;
    int ti = 0;
@@ -95,15 +95,15 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp, keytype* des
       ti++; 
       j++;
    }
-   memcpy(dest, tmp, (N1 + N2)*sizeof(keytype));
+   //memcpy(dest, tmp, (N1 + N2)*sizeof(keytype));
 
 } // end of merge()
 
 
 
-void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp, keytype* dest){
-   if (true){
-      merge2(A, B, a, b, tmp, dest);
+void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
+   if (a+b < PAR_TH){
+      merge2(A, B, a, b, tmp);
    }
    else{
 
@@ -119,6 +119,7 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp, keytype* dest){
       #pragma omp task
       Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1, A+a1+b1);
       #pragma omp taskwait
+      memcpy(A, tmp, a+b);
    }
 
 }
