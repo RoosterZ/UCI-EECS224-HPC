@@ -24,6 +24,8 @@ mergesort: driver.o sort.o parallel-mergesort.o
 
 mergesort2: driver.o sort.o parallel-mergesort2.o
 	$(CC) $(COPTFLAGS) -o $@ $^
+mergesort3: driver.o sort.o parallel-mergesort3.o
+	$(CC) $(COPTFLAGS) -o $@ $^
 
 %.o: %.cc
 	$(CC) $(CFLAGS) $(COPTFLAGS) -o $@ -c $<
