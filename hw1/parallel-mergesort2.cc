@@ -103,7 +103,7 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 
 void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (true){
+   if (a+b < 300){
       merge2(A, B, a, b, tmp);
    }
    else{
@@ -159,6 +159,7 @@ void mySort (int N, keytype* A)
    }
    for(int i = 0; i < N; i++){
       std::cout << A[i];
+      std::cout << endl;
    }
 }
 
