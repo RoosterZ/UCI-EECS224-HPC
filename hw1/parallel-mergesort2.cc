@@ -102,7 +102,7 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp, keytype* des
 
 
 void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp, keytype* dest){
-   if (a+b < PAR_TH){
+   if (true){
       merge2(A, B, a, b, tmp, dest);
    }
    else{
