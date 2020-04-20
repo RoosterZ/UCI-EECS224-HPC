@@ -157,10 +157,10 @@ void mySort (int N, keytype* A)
       #pragma omp single
       mergeSort(A, N, tmp);
    }
-   for(int i = 0; i < N; i++){
-      std::cout << A[i];
-      std::cout << std::endl;
-   }
+   // for(int i = 0; i < N; i++){
+   //    std::cout << A[i];
+   //    std::cout << std::endl;
+   // }
 }
 
 /* eof */
