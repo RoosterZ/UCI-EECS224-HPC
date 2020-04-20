@@ -115,9 +115,9 @@ void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
          b2 = 0;
       }
       #pragma omp task
-      Pmerge2(A, B, a1, b1, tmp, A);
+      Pmerge2(A, B, a1, b1, tmp);
       #pragma omp task
-      Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1, A+a1+b1);
+      Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
       #pragma omp taskwait
       memcpy(A, tmp, a+b);
    }
@@ -141,7 +141,7 @@ void mergeSort(keytype* A, int N, keytype* tmp)
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
 
    }
-   Pmerge2(A, A+(N/2), N/2, N-N/2, tmp, A);
+   Pmerge2(A, A+(N/2), N/2, N-N/2, tmp);
 }
 
 
