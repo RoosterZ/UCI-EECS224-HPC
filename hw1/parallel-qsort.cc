@@ -40,7 +40,8 @@ int partition (keytype pivot, int N, keytype* A)
 }
 
 int partition2 (keytype pivot, int N, keytype* A){
-  keytype tmp[N];
+  //keytype tmp[N];
+  keytype *tmp = new keytype[N];
   int *leq = new int[N]();
   int *gt = new int[N]();
   int i;
@@ -70,8 +71,9 @@ int partition2 (keytype pivot, int N, keytype* A){
   }
 
   memcpy(A, tmp, N * sizeof(keytype));
-  delete[] leq;
-  delete[] gt;
+  delete [] leq;
+  delete [] gt;
+  delete [] tmp;
   return N - gt[N-1];
 }
 
