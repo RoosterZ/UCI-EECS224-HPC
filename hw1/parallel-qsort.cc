@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "sort.hh"
 #include <cstring>
+#include <iostream>
 
 /**
  *   Given a pivot value, this routine partitions a given input array
@@ -90,6 +91,7 @@ void quickSort (int N, keytype* A)
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
     int n_le = partition2 (pivot, N, A);
+    std::cout << n_le << std::endl;
     //partition2(pivot, N, A);
     #pragma omp task
     quickSort (n_le, A);
