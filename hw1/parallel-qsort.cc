@@ -40,8 +40,8 @@ int partition (keytype pivot, int N, keytype* A)
 
 int partition2 (keytype pivot, int N, keytype* A){
   keytype tmp[N];
-  keytype leq[N] = {0};
-  keytype gt[N] = {0};
+  int *leq = new int[N]();
+  int *gt = new int[N]();
   for (int i = 0; i < N; i++){
     if (A[i] <= pivot){
       leq[i] = 1;
@@ -49,6 +49,7 @@ int partition2 (keytype pivot, int N, keytype* A){
     else{
       gt[i] = 1;
     }
+  
 
     
   }
