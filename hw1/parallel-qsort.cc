@@ -10,6 +10,7 @@
 #include "sort.hh"
 #include <cstring>
 #include <iostream>
+#include <omp.h>
 
 /**
  *   Given a pivot value, this routine partitions a given input array
@@ -40,7 +41,7 @@ int partition (keytype pivot, int N, keytype* A)
   return k;
 }
 
-int partition2 (keytype pivot, int N, keytype* A){
+int partition2 (keytype pivot, int N, keytype* A, int level){
   //keytype tmp[N];
   keytype *tmp = new keytype[N];
   int *leq = new int[N]();
@@ -51,6 +52,7 @@ int partition2 (keytype pivot, int N, keytype* A){
   }
 
   int i;
+  //std::cout<<'partition'<<level<<omp_get_num_threads()<<
   #pragma omp parallel for shared (A, N, leq, gt, pivot) private(i)
   //#pragma omp for
   for (i = 0; i < N; i++){
@@ -88,7 +90,7 @@ int partition2 (keytype pivot, int N, keytype* A){
 
 
 
-void quickSort (int N, keytype* A)
+void quickSort (int N, keytype* A, int level)
 {
   const int G = 1024; /* base case size, a tuning parameter */
   if (N < G)
