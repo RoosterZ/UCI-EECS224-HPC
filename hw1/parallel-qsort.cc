@@ -51,7 +51,7 @@ int partition2 (keytype pivot, int N, keytype* A){
   }
 
   int i;
-  //#pragma omp parallel for shared (A, N, leq, gt, pivot) private(i)
+  #pragma omp parallel for shared (A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
       leq[i] = 1;
@@ -66,7 +66,7 @@ int partition2 (keytype pivot, int N, keytype* A){
     gt[i] = gt[i-1] + gt[i];
   }
 
-  //#pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
+  #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
       tmp[leq[i]-1] = A[i];
@@ -106,7 +106,7 @@ void quickSort (int N, keytype* A)
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
     int n_le = partition2 (pivot, N, A);
-    std::cout << n_le << std::endl;
+    //std::cout << n_le << std::endl;
     //partition2(pivot, N, A);
     #pragma omp task
     quickSort (n_le, A);
