@@ -76,8 +76,6 @@ int partition2 (keytype pivot, int N, keytype* A){
   if (gt != NULL) delete [] gt;
   if (tmp != NULL)  delete [] tmp;
   return N - gt[N-1];
-
-  
 }
 
 
@@ -101,7 +99,7 @@ void quickSort (int N, keytype* A)
     // Partition around the pivot. Upon completion, n_less, n_equal,
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
-    int n_le = partition2 (pivot, N, A);
+    int n_le = partition (pivot, N, A);
     std::cout << n_le << std::endl;
     //partition2(pivot, N, A);
     #pragma omp task
