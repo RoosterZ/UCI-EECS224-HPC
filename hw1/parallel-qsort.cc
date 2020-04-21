@@ -77,10 +77,11 @@ int partition2 (keytype pivot, int N, keytype* A){
   }
 
   memcpy(A, tmp, N * sizeof(keytype));
+  int rval = N - gt[N-1];
   if (leq != NULL)  delete [] leq;
   if (gt != NULL) delete [] gt;
   if (tmp != NULL)  delete [] tmp;
-  return N - gt[N-1];
+  return rval;
 }
 
 
