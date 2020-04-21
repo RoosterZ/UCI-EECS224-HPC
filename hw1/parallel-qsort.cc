@@ -49,10 +49,9 @@ int partition2 (keytype pivot, int N, keytype* A){
     else{
       gt[i] = 1;
     }
-  
 
-    
   }
+  return 0;
 }
 
 void quickSort (int N, keytype* A)
