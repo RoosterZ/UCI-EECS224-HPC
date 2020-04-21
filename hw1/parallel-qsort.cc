@@ -38,6 +38,22 @@ int partition (keytype pivot, int N, keytype* A)
   return k;
 }
 
+int partition2 (keytype pivot, int N, keytype* A){
+  keytype tmp[N];
+  keytype leq[N] = {0};
+  keytype gt[N] = {0};
+  for (int i = 0; i < N; i++){
+    if (A[i] <= pivot){
+      leq[i] = 1;
+    }
+    else{
+      gt[i] = 1;
+    }
+
+    
+  }
+}
+
 void quickSort (int N, keytype* A)
 {
   const int G = 1024; /* base case size, a tuning parameter */
@@ -51,6 +67,7 @@ void quickSort (int N, keytype* A)
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
     int n_le = partition (pivot, N, A);
+    partition2(pivot, N, A);
     #pragma omp task
     quickSort (n_le, A);
     #pragma omp task
