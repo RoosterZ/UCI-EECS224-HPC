@@ -72,9 +72,9 @@ int partition2 (keytype pivot, int N, keytype* A){
   }
 
   memcpy(A, tmp, N * sizeof(keytype));
-  delete [] leq;
-  delete [] gt;
-  delete [] tmp;
+  if (leq != NULL)  delete [] leq;
+  if (gt != NULL) delete [] gt;
+  if (tmp != NULL)  delete [] tmp;
   return N - gt[N-1];
 
   
@@ -101,14 +101,14 @@ void quickSort (int N, keytype* A)
     // Partition around the pivot. Upon completion, n_less, n_equal,
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
-    int n_le = partition3 (pivot, N, A);
-    // std::cout << n_le << std::endl;
-    // //partition2(pivot, N, A);
-    // #pragma omp task
-    // quickSort (n_le, A);
-    // #pragma omp task
-    // quickSort (N-n_le, A + n_le);
-    // #pragma omp taskwait
+    int n_le = partition2 (pivot, N, A);
+    std::cout << n_le << std::endl;
+    //partition2(pivot, N, A);
+    #pragma omp task
+    quickSort (n_le, A);
+    #pragma omp task
+    quickSort (N-n_le, A + n_le);
+    #pragma omp taskwait
   }
 }
 
