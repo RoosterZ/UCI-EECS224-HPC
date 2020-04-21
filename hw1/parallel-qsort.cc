@@ -102,13 +102,13 @@ void quickSort (int N, keytype* A, int level)
     // Partition around the pivot. Upon completion, n_less, n_equal,
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
-    int n_le = partition2 (pivot, N, A);
+    int n_le = partition2 (pivot, N, A, level);
     //std::cout << n_le << std::endl;
     //partition2(pivot, N, A);
     #pragma omp task
-    quickSort (n_le, A);
+    quickSort (n_le, A, level + 1);
     #pragma omp task
-    quickSort (N-n_le, A + n_le);
+    quickSort (N-n_le, A + n_le, level + 1);
     #pragma omp taskwait
   }
 }
@@ -118,7 +118,7 @@ void mySort (int N, keytype* A)
   #pragma omp parallel
   {
     #pragma omp single
-    quickSort (N, A);
+    quickSort (N, A, 1);
   }
 }
 
