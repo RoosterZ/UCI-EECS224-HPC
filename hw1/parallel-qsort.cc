@@ -44,7 +44,7 @@ int partition2 (keytype pivot, int N, keytype* A){
   int *leq = new int[N]();
   int *gt = new int[N]();
   int i;
-  #pragma omp parallel for shared (A, N, leq, gt, pivot) private(i)
+  //#pragma omp parallel for shared (A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
       leq[i] = 1;
