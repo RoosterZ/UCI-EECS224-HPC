@@ -45,6 +45,10 @@ int partition2 (keytype pivot, int N, keytype* A){
   keytype *tmp = new keytype[N];
   int *leq = new int[N]();
   int *gt = new int[N]();
+  if (tmp == NULL || leq == NULL || gt == NULL){
+    std::cout<<"null pointer"<<std::endl;
+    return 1;
+  }
   int i;
   //#pragma omp parallel for shared (A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
