@@ -63,7 +63,7 @@ int partition2 (keytype pivot, int N, keytype* A){
     gt[i] = gt[i-1] + gt[i];
   }
 
-  #pragma omp taskloop shared(A, N, leq, gt, pivot) private(i)
+  //#pragma omp taskloop shared(A, N, leq, gt, pivot) private(i)
   //#pragma omp for
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
