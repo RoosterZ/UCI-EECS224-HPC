@@ -48,9 +48,9 @@ void quickSort (int N, keytype* A)
     int n_le = partition (pivot, N, A);
     #pragma omp task
     quickSort (n_le, A);
-    //#pragma omp task
+    #pragma omp task
     quickSort (N-n_le, A + n_le);
-    #pragma omp taskwait
+    //#pragma omp taskwait
   }
 }
 
