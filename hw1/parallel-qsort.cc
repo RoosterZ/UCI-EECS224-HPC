@@ -67,7 +67,7 @@ int partition2 (keytype pivot, int N, keytype* A){
   int *leq_psum = new int[N]();
   int *gt_psum = new int[N]();
   int scan_leq = 0, scan_gt = 0;
-  #pragma omp simd reduction(inscan, +:scan_leq)
+  #pragma omp simd reduction(inscan: scan_leq)
   for (i = 0; i < N; i++){
     scan_leq += leq[i];
     //scan_gt += gt[i];
@@ -79,7 +79,7 @@ int partition2 (keytype pivot, int N, keytype* A){
 
   }
 
-  #pragma omp simd reduction(inscan, +:scan_gt)
+  #pragma omp simd reduction(inscan:scan_gt)
   for (i = 0; i < N; i++){
 
     scan_gt += gt[i];
