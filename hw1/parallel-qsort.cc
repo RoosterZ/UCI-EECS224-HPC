@@ -52,7 +52,7 @@ int partition2 (keytype pivot, int N, keytype* A, int level){
   }
 
   int i;
-  std::cout<<"partition"<<level<<"|"<<omp_get_num_threads()<<std::endl;
+  //std::cout<<"partition"<<level<<"|"<<omp_get_num_threads()<<std::endl;
   //#pragma omp taskloop shared (A, N, leq, gt, pivot) private(i)
   //#pragma omp taskloop
   for (i = 0; i < N; i++){
@@ -106,7 +106,8 @@ void quickSort (int N, keytype* A, int level)
 //    int n_le = partition2 (pivot, N, A, level);
     //std::cout << n_le << std::endl;
     //partition2(pivot, N, A);
-    std::cout<<"qs"<<level<<"|"<<omp_get_num_threads()<<std::endl;
+
+    //std::cout<<"qs"<<level<<"|"<<omp_get_num_threads()<<std::endl;
 
     #pragma omp task
     quickSort (n_le, A, level + 1);
