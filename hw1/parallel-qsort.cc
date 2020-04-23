@@ -1,8 +1,3 @@
- *  \file parallel-qsort.cc
- *
- *  \brief Implement your parallel quicksort algorithm in this file.
- */
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
