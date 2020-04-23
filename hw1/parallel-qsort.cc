@@ -94,7 +94,7 @@ void quickSort (int N, keytype* A)
     // Partition around the pivot. Upon completion, n_less, n_equal,
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
-    int n_le = partition1 (pivot, N, A);
+    int n_le = partition (pivot, N, A);
     #pragma omp task
     quickSort (n_le, A);
     #pragma omp task
