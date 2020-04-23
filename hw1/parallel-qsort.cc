@@ -50,6 +50,7 @@ int partition2 (keytype pivot, int N, keytype* A){
   #pragma omp taskloop shared (A, N, leq, gt, pivot) private(i) num_tasks(4)
   //#pragma omp taskloop
   for (i = 0; i < N; i++){
+    std::cout<<omp_get_thread_num();
     if (A[i] <= pivot){
       leq[i] = 1;
     }
@@ -57,7 +58,7 @@ int partition2 (keytype pivot, int N, keytype* A){
       gt[i] = 1;
     }
   }
-
+  std::cout<<std::endl<<"-----------";
   for (i = 1; i < N; i++){
     leq[i] = leq[i-1] + leq[i];
     gt[i] = gt[i-1] + gt[i];
