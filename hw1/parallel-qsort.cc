@@ -113,7 +113,7 @@ void quickSort (int N, keytype* A, int level)
     quickSort (n_le, A, level + 1);
     #pragma omp task
     quickSort (N-n_le, A + n_le, level + 1);
-    //#pragma omp taskwait
+    #pragma omp taskwait
 
 
 
