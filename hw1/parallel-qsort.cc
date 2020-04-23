@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sort.hh"
-//#include <omp.h>
+#include <omp.h>
 
 /**
  *   Given a pivot value, this routine partitions a given input array
