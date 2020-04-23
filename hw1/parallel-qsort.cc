@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sort.hh"
-#include <omp.h>
+//#include <omp.h>
 
 /**
  *   Given a pivot value, this routine partitions a given input array
@@ -48,7 +48,7 @@ void quickSort (int N, keytype* A)
     int n_le = partition (pivot, N, A);
     #pragma omp task
     quickSort (n_le, A);
-    #pragma omp task
+    //#pragma omp task
     quickSort (N-n_le, A + n_le);
     #pragma omp taskwait
   }
