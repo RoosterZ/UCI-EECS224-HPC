@@ -59,19 +59,47 @@ int partition2 (keytype pivot, int N, keytype* A){
     }
   }
   //std::cout<<std::endl<<"-----------"<<std::endl;
-  for (i = 1; i < N; i++){
-    leq[i] = leq[i-1] + leq[i];
-    gt[i] = gt[i-1] + gt[i];
+  // for (i = 1; i < N; i++){
+  //   leq[i] = leq[i-1] + leq[i];
+  //   gt[i] = gt[i-1] + gt[i];
+  // }
+
+  int *leq_psum = new int[N]();
+  int *gt_psum = new int[N]();
+  int scan_leq = 0, scan_gt = 0;
+  #pragma omp simd reduction(inscan, +:(scan_leq, scan_gt))
+  for (i = 0; i < N; i++){
+    scan_leq += leq[i];
+    scan_gt += gt[i];
+    #pragma omp scan inclusive(scan_leq, scan_gt)
+    {
+      leq_psum[i] = scan_leq;
+      gt_psum[i] = scan_gt;
+    }
+
   }
+
+
+
+  // #pragma omp taskloop shared(A, N, leq, gt, pivot) private(i) num_tasks(8)
+  // //#pragma omp for
+  // for (i = 0; i < N; i++){
+  //   if (A[i] <= pivot){
+  //     tmp[leq[i]-1] = A[i];
+  //   }
+  //   else{
+  //     tmp[N-gt[i]] = A[i];
+  //   }
+  // }
 
   #pragma omp taskloop shared(A, N, leq, gt, pivot) private(i) num_tasks(8)
   //#pragma omp for
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
-      tmp[leq[i]-1] = A[i];
+      tmp[leq_psum[i]-1] = A[i];
     }
     else{
-      tmp[N-gt[i]] = A[i];
+      tmp[N-gt_psum[i]] = A[i];
     }
   }
 
@@ -80,6 +108,8 @@ int partition2 (keytype pivot, int N, keytype* A){
   if (leq != NULL)  delete [] leq;
   if (gt != NULL) delete [] gt;
   if (tmp != NULL)  delete [] tmp;
+  if (leq_psum != NULL)  delete [] leq_psum;
+  if (gt_psum != NULL)  delete [] gt_psum;  
   return rval;
 }
 
@@ -114,3 +144,95 @@ void mySort (int N, keytype* A)
 }
 
 /* eof */
+
+
+
+#include<iostream>
+02
+#include<math.h>
+03
+#include<string.h>
+04
+#include<chrono>
+05
+#define N 16
+06
+using namespace std;
+07
+int main(){
+08
+        int a[N], serial_scan[N], naive_scan[N], simd_scan[N], scan_a;
+09
+        for(int i = 0; i < N; i++){
+10
+                a[i] = i;
+11
+                serial_scan[i] = 0;
+12
+                simd_scan[i] = 0;
+13
+        }
+14
+        //Serial Scan with "+" operator
+15
+        auto start = std::chrono::system_clock::now();
+16
+        scan_a = 0;
+17
+        for(int i = 0; i < N; i++){
+18
+                scan_a += a[i];
+19
+                serial_scan[i] = scan_a;
+20
+        }
+21
+        auto stop = std::chrono::system_clock::now();
+22
+        std::cout<<"Serial Scan Output:\n";
+23
+        for(int i = 0; i < N; i++)
+24
+                std::cout<<serial_scan[i]<<"\t";
+25
+        std::cout<<"\n";
+26
+        std::chrono::duration<double> elapsed_seconds = stop-start;
+27
+        std::cout<<"Time taken in seconds is "<<elapsed_seconds.count()<<"\n";
+28
+        //SIMD Scan with "+" operator
+29
+        start = std::chrono::system_clock::now();
+30
+        scan_a = 0;
+31
+        #pragma omp simd reduction(inscan, +:scan_a)
+32
+        for(int i = 0; i < N; i++){
+33
+                scan_a += a[i];
+34
+                #pragma omp scan inclusive(scan_a)
+35
+                simd_scan[i] = scan_a;
+36
+        }
+37
+        stop = std::chrono::system_clock::now();
+38
+        std::cout<<"SIMD Scan Output:\n";
+39
+        for(int i = 0; i < N; i++)
+40
+                std::cout<<simd_scan[i]<<"\t";
+41
+        std::cout<<"\n";
+42
+        elapsed_seconds = stop - start;
+43
+        std::cout<<"Time taken in seconds is "<<elapsed_seconds.count()<<"\n";
+44
+        return 0;
+45
+}
