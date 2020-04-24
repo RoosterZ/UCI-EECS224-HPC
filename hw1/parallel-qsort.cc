@@ -26,7 +26,7 @@ void Pscan(int *A, int N){
   int imax = ceil(log2(N));
   int jmax = 2 << (imax - 1);
   int stride = 1;
-  for (i = 0; i < 3; i++){
+  for (i = 0; i < imax; i++){
       for (j = 0; j < N; j++){
           if (j < stride){
               curr[j] = prev[j];
