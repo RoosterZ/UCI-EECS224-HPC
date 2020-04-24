@@ -1,6 +1,6 @@
 CC = icpc
 CFLAGS =
-OPTFLAGS = -O3 -g -openmp
+OPTFLAGS = -O3 -g -qopenmp
 LDFLAGS =
 
 default:
