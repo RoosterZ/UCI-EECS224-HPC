@@ -57,10 +57,10 @@ int partition2 (keytype pivot, int N, keytype* A){
     }
   }
   //std::cout<<std::endl<<"-----------"<<std::endl;
-  // for (i = 1; i < N; i++){
-  //   leq[i] = leq[i-1] + leq[i];
-  //   gt[i] = gt[i-1] + gt[i];
-  // }
+  for (i = 1; i < N; i++){
+    leq[i] = leq[i-1] + leq[i];
+    gt[i] = gt[i-1] + gt[i];
+  }
 
 
   #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
@@ -101,7 +101,7 @@ void quickSort (int N, keytype* A)
     quickSort (n_le, A);
     #pragma omp task
     quickSort (N-n_le, A + n_le);
-    #pragma omp taskwait
+    //#pragma omp taskwait
   }
 }
 
