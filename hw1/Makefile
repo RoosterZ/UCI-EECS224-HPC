@@ -1,6 +1,5 @@
 CC = icpc
 CFLAGS =
-#OPTFLAGS = -O3 -g -fopenmp -lstdc++
 OPTFLAGS = -O3 -g -openmp
 LDFLAGS =
 
