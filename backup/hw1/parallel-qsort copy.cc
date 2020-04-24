@@ -5,8 +5,6 @@
 //#include <omp.h>
 #include <cstring>
 #include <iostream>
-#include <cmath>
-
 
 /**
  *   Given a pivot value, this routine partitions a given input array
@@ -18,41 +16,6 @@
  *   partitioned output. It also returns the index n_le such that
  *   (A[0:(k-1)] == A_le) and (A[k:(N-1)] == A_gt).
  */
-void Pscan(int *A, int N){
-  int *curr = new int[N];
-  int *prev = A;
-  int *tmp;
-  int i, j;
-  int imax = ceil(log2(N));
-  int jmax = 2 << (imax - 1);
-  int stride = 1;
-
-  for (i = 0; i < imax; i++){
-      #pragma omp parallel for shared(N, curr, prev, stride) private(j)
-      for (j = 0; j < N; j++){
-          if (j < stride){
-              curr[j] = prev[j];
-          }
-          else{
-              curr[j] = prev[j] + prev[j-stride];
-          }
-      }
-      tmp = curr;
-      curr = prev;
-      prev = tmp;
-      stride = stride * 2;
-  }
-    
-  if (prev == A){
-      delete[] curr;
-  }
-  else{
-      memcpy(A, prev, N*sizeof(int));
-      delete[] prev;
-  }
-}
-
-
 int partition (keytype pivot, int N, keytype* A)
 {
   int k = 0;
@@ -74,7 +37,7 @@ int partition (keytype pivot, int N, keytype* A)
 
 int partition2 (keytype pivot, int N, keytype* A){
   //keytype tmp[N];
-  
+  keytype *tmp = new keytype[N];
   int *leq = new int[N]();
   int *gt = new int[N]();
   if (tmp == NULL || leq == NULL || gt == NULL){
@@ -93,18 +56,13 @@ int partition2 (keytype pivot, int N, keytype* A){
       gt[i] = 1;
     }
   }
-
-  // //std::cout<<std::endl<<"-----------"<<std::endl;
-  // for (i = 1; i < N; i++){
-  //   leq[i] = leq[i-1] + leq[i];
-  //   gt[i] = gt[i-1] + gt[i];
-  // }
-
-  Pscan(leq, N);
-  Pscan(gt, N);
+  //std::cout<<std::endl<<"-----------"<<std::endl;
+  for (i = 1; i < N; i++){
+    leq[i] = leq[i-1] + leq[i];
+    gt[i] = gt[i-1] + gt[i];
+  }
 
 
-  keytype *tmp = new keytype[N];
   #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
@@ -157,5 +115,4 @@ void mySort (int N, keytype* A)
 }
 
 /* eof */
-
 
