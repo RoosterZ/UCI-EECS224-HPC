@@ -1,16 +1,10 @@
-/**
- *  \file parallel-qsort.cc
- *
- *  \brief Implement your parallel quicksort algorithm in this file.
- */
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "sort.hh"
+//#include <omp.h>
 #include <cstring>
 #include <iostream>
-#include <omp.h>
 
 /**
  *   Given a pivot value, this routine partitions a given input array
@@ -41,7 +35,7 @@ int partition (keytype pivot, int N, keytype* A)
   return k;
 }
 
-int partition2 (keytype pivot, int N, keytype* A, int level){
+int partition2 (keytype pivot, int N, keytype* A){
   //keytype tmp[N];
   keytype *tmp = new keytype[N];
   int *leq = new int[N]();
@@ -53,8 +47,7 @@ int partition2 (keytype pivot, int N, keytype* A, int level){
 
   int i;
   //std::cout<<"partition"<<level<<"|"<<omp_get_num_threads()<<std::endl;
-  //#pragma omp taskloop shared (A, N, leq, gt, pivot) private(i)
-  //#pragma omp taskloop
+  #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
       leq[i] = 1;
@@ -63,14 +56,14 @@ int partition2 (keytype pivot, int N, keytype* A, int level){
       gt[i] = 1;
     }
   }
-
+  //std::cout<<std::endl<<"-----------"<<std::endl;
   for (i = 1; i < N; i++){
     leq[i] = leq[i-1] + leq[i];
     gt[i] = gt[i-1] + gt[i];
   }
 
-  //#pragma omp taskloop shared(A, N, leq, gt, pivot) private(i)
-  //#pragma omp for
+
+  #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
       tmp[leq[i]-1] = A[i];
@@ -80,17 +73,18 @@ int partition2 (keytype pivot, int N, keytype* A, int level){
     }
   }
 
+
   memcpy(A, tmp, N * sizeof(keytype));
   int rval = N - gt[N-1];
   if (leq != NULL)  delete [] leq;
   if (gt != NULL) delete [] gt;
   if (tmp != NULL)  delete [] tmp;
+  // if (leq_psum != NULL)  delete [] leq_psum;
+  // if (gt_psum != NULL)  delete [] gt_psum;  
   return rval;
 }
 
-
-
-void quickSort (int N, keytype* A, int level)
+void quickSort (int N, keytype* A)
 {
   const int G = 1024; /* base case size, a tuning parameter */
   if (N < G)
@@ -102,21 +96,12 @@ void quickSort (int N, keytype* A, int level)
     // Partition around the pivot. Upon completion, n_less, n_equal,
     // and n_greater should each be the number of keys less than,
     // equal to, or greater than the pivot, respectively. Moreover, the array
-    int n_le = partition (pivot, N, A);    
-//    int n_le = partition2 (pivot, N, A, level);
-    //std::cout << n_le << std::endl;
-    //partition2(pivot, N, A);
-
-    //std::cout<<"qs"<<level<<"|"<<omp_get_num_threads()<<std::endl;
-
+    int n_le = partition2 (pivot, N, A);
     #pragma omp task
-    quickSort (n_le, A, level + 1);
+    quickSort (n_le, A);
     #pragma omp task
-    quickSort (N-n_le, A + n_le, level + 1);
-    #pragma omp taskwait
-
-
-
+    quickSort (N-n_le, A + n_le);
+    //#pragma omp taskwait
   }
 }
 
@@ -125,8 +110,9 @@ void mySort (int N, keytype* A)
   #pragma omp parallel
   {
     #pragma omp single
-    quickSort (N, A, 1);
+    quickSort (N, A);
   }
 }
 
 /* eof */
+

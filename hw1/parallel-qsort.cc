@@ -5,6 +5,8 @@
 //#include <omp.h>
 #include <cstring>
 #include <iostream>
+#include <cmath>
+
 
 /**
  *   Given a pivot value, this routine partitions a given input array
@@ -56,11 +58,18 @@ int partition2 (keytype pivot, int N, keytype* A){
       gt[i] = 1;
     }
   }
-  //std::cout<<std::endl<<"-----------"<<std::endl;
-  for (i = 1; i < N; i++){
-    leq[i] = leq[i-1] + leq[i];
-    gt[i] = gt[i-1] + gt[i];
-  }
+
+
+
+  // //std::cout<<std::endl<<"-----------"<<std::endl;
+  // for (i = 1; i < N; i++){
+  //   leq[i] = leq[i-1] + leq[i];
+  //   gt[i] = gt[i-1] + gt[i];
+  // }
+
+  Pscan(leq, N);
+  Pscan(gt, N);
+
 
 
   #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
@@ -115,4 +124,32 @@ void mySort (int N, keytype* A)
 }
 
 /* eof */
+
+void Pscan(int *A, int N){
+  int *curr = new int[N];
+  int *tmp;
+  int i, j;
+  int imax = ceil(log2(N));
+  int jmax = 2 << (imax - 1);
+  int stride = 1;
+  for (i = 0; i < imax; i++){
+      for (j = 0; j < N; j++){
+          if (j < stride){
+              curr[j] = A[j];
+          }
+          else{
+              curr[j] = A[j] + A[j-stride];
+          }
+      }
+      // for (int k=0; k < N; k++){
+      //     std::cout<<curr[k]<<" ";
+      // }
+      //std::cout<<std::endl;
+      tmp = curr;
+      curr = A;
+      A = tmp;
+      stride = stride * 2;
+  }
+  delete[] curr;  
+}
 
