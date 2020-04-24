@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N mergesort
-#$ -q pub8i
+#$ -q class
 #$ -pe openmp 8
 
 # Module load intel compiler 
