@@ -18,6 +18,35 @@
  *   partitioned output. It also returns the index n_le such that
  *   (A[0:(k-1)] == A_le) and (A[k:(N-1)] == A_gt).
  */
+void Pscan(int *A, int N){
+  int *curr = new int[N];
+  int *tmp;
+  int i, j;
+  int imax = ceil(log2(N));
+  int jmax = 2 << (imax - 1);
+  int stride = 1;
+  for (i = 0; i < imax; i++){
+      for (j = 0; j < N; j++){
+          if (j < stride){
+              curr[j] = A[j];
+          }
+          else{
+              curr[j] = A[j] + A[j-stride];
+          }
+      }
+      // for (int k=0; k < N; k++){
+      //     std::cout<<curr[k]<<" ";
+      // }
+      //std::cout<<std::endl;
+      tmp = curr;
+      curr = A;
+      A = tmp;
+      stride = stride * 2;
+  }
+  delete[] curr;  
+}
+
+
 int partition (keytype pivot, int N, keytype* A)
 {
   int k = 0;
@@ -125,31 +154,4 @@ void mySort (int N, keytype* A)
 
 /* eof */
 
-void Pscan(int *A, int N){
-  int *curr = new int[N];
-  int *tmp;
-  int i, j;
-  int imax = ceil(log2(N));
-  int jmax = 2 << (imax - 1);
-  int stride = 1;
-  for (i = 0; i < imax; i++){
-      for (j = 0; j < N; j++){
-          if (j < stride){
-              curr[j] = A[j];
-          }
-          else{
-              curr[j] = A[j] + A[j-stride];
-          }
-      }
-      // for (int k=0; k < N; k++){
-      //     std::cout<<curr[k]<<" ";
-      // }
-      //std::cout<<std::endl;
-      tmp = curr;
-      curr = A;
-      A = tmp;
-      stride = stride * 2;
-  }
-  delete[] curr;  
-}
 
