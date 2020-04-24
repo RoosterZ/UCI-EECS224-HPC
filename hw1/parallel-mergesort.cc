@@ -66,7 +66,7 @@ int binarySearch(keytype* A, int N, int target)
 
 // } 
 
-void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
+void merge(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
    int i = 0;
    int j = 0;
    int ti = 0;
@@ -93,13 +93,11 @@ void merge2(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
       ti++; 
       j++;
    }
-   //memcpy(dest, tmp, (N1 + N2)*sizeof(keytype));
 
 }
 
-void Pmerge2(keytype* A, keytype* B, int a, int b, keytype* tmp){
+void Pmerge(keytype* A, keytype* B, int a, int b, keytype* tmp){
    if (a+b < 3000){
-   //if (true){
       merge2(A, B, a, b, tmp);
    }
    else{
@@ -137,7 +135,7 @@ void mergeSort(keytype* A, int N, keytype* tmp)
 
    }
 
-   Pmerge2(A, A+(N/2), N/2, N-N/2, tmp);
+   Pmerge(A, A+(N/2), N/2, N-N/2, tmp);
 
    memcpy(A, tmp, N * sizeof(keytype));
 }
