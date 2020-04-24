@@ -1,6 +1,6 @@
 #!/bin/bash
-#$ -N mergesort
-#$ -q class
+#$ -N quicksort
+#$ -q class16
 #$ -pe openmp 8
 
 # Module load intel compiler 
