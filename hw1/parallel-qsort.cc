@@ -26,7 +26,9 @@ void Pscan(int *A, int N){
   int imax = ceil(log2(N));
   int jmax = 2 << (imax - 1);
   int stride = 1;
+
   for (i = 0; i < imax; i++){
+      #pragma omp parallel for shared(N, curr, prev, stride) private(j)
       for (j = 0; j < N; j++){
           if (j < stride){
               curr[j] = prev[j];
@@ -35,10 +37,6 @@ void Pscan(int *A, int N){
               curr[j] = prev[j] + prev[j-stride];
           }
       }
-      // for (int k=0; k < N; k++){
-      //     std::cout<<curr[k]<<" ";
-      // }
-      //std::cout<<std::endl;
       tmp = curr;
       curr = prev;
       prev = tmp;
