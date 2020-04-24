@@ -15,10 +15,10 @@
 #include <cstring>
 #include <iostream>
 
-
+// Input an array A with size N, and a target value
+// Return the index of the first element in A that is greater than target
 int binarySearch(keytype* A, int N, int target) 
 { 
-   
    int l = 0, r = N - 1;
    int mid = 0;
    while (r > l){
@@ -98,29 +98,27 @@ void Pmerge(keytype* A, keytype* B, int a, int b, keytype* tmp){
 
 void mergeSort(keytype* A, int N, keytype* tmp)
 {
-   if (N < 2) return;
-   if (N > 20000){
+   if (N < 2) return; // Base case
+   if (N > 20000){    // If input size is large enough, parallelize smaller problems
       #pragma omp task
       mergeSort(A, N/2, tmp);
       #pragma omp task
       mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
       #pragma omp taskwait
    }
-   else{
+   else{    // If input size is small, use normal serial way
        mergeSort(A, N/2, tmp);
        mergeSort(A+(N/2), N-(N/2), tmp+(N/2));
-
    }
 
-   Pmerge(A, A+(N/2), N/2, N-N/2, tmp);
-
+   Pmerge(A, A+(N/2), N/2, N-N/2, tmp); // Merge 2 sorted halves in parallel
    memcpy(A, tmp, N * sizeof(keytype));
 }
 
 
 void mySort (int N, keytype* A)
 {
-  /* Lucky you, you get to start from scratch */
+
    keytype* tmp = newKeys(N);
    #pragma omp parallel
    {
@@ -129,4 +127,3 @@ void mySort (int N, keytype* A)
    }
 }
 
-/* eof */
