@@ -11,7 +11,7 @@ module load intel-parallel-studio-xe/15.0.3
 # core count of our job.   No need to set it again, but here
 # it is.
 export OMP_NUM_THREADS=8
-
+export OMP_NESTED=TRUE
 
 # Run quicksort on 10 million elements
 ./quicksort 10000000

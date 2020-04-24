@@ -47,10 +47,8 @@ int partition2 (keytype pivot, int N, keytype* A){
 
   int i;
   //std::cout<<"partition"<<level<<"|"<<omp_get_num_threads()<<std::endl;
-  #pragma omp taskloop shared (A, N, leq, gt, pivot) private(i) num_tasks(8)
-  //#pragma omp taskloop
+  #pragma omp parallel for (A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
-    //std::cout<<omp_get_thread_num();
     if (A[i] <= pivot){
       leq[i] = 1;
     }
@@ -64,63 +62,25 @@ int partition2 (keytype pivot, int N, keytype* A){
   //   gt[i] = gt[i-1] + gt[i];
   // }
 
-  int *leq_psum = new int[N]();
-  int *gt_psum = new int[N]();
-  int scan_leq = 0, scan_gt = 0;
-  #pragma omp parallel for simd reduction(inscan, +:scan_leq)
-  for (i = 0; i < N; i++){
-    scan_leq += leq[i];
-    //scan_gt += gt[i];
-    #pragma omp scan inclusive(scan_leq)
-    {
-      leq_psum[i] = scan_leq;
-      //gt_psum[i] = scan_gt;
-    }
 
-  }
-
-  #pragma omp simd reduction(inscan:scan_gt)
-  for (i = 0; i < N; i++){
-
-    scan_gt += gt[i];
-    #pragma omp scan inclusive(scan_gt)
-    {
-      gt_psum[i] = scan_gt;
-    }
-
-  }  
-
-
-
-  // #pragma omp taskloop shared(A, N, leq, gt, pivot) private(i) num_tasks(8)
-  // //#pragma omp for
-  // for (i = 0; i < N; i++){
-  //   if (A[i] <= pivot){
-  //     tmp[leq[i]-1] = A[i];
-  //   }
-  //   else{
-  //     tmp[N-gt[i]] = A[i];
-  //   }
-  // }
-
-  #pragma omp taskloop shared(A, N, leq, gt, pivot) private(i) num_tasks(8)
-  //#pragma omp for
+  #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
-      tmp[leq_psum[i]-1] = A[i];
+      tmp[leq[i]-1] = A[i];
     }
     else{
-      tmp[N-gt_psum[i]] = A[i];
+      tmp[N-gt[i]] = A[i];
     }
   }
+
 
   memcpy(A, tmp, N * sizeof(keytype));
   int rval = N - gt[N-1];
   if (leq != NULL)  delete [] leq;
   if (gt != NULL) delete [] gt;
   if (tmp != NULL)  delete [] tmp;
-  if (leq_psum != NULL)  delete [] leq_psum;
-  if (gt_psum != NULL)  delete [] gt_psum;  
+  // if (leq_psum != NULL)  delete [] leq_psum;
+  // if (gt_psum != NULL)  delete [] gt_psum;  
   return rval;
 }
 
