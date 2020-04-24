@@ -33,39 +33,9 @@ int binarySearch(keytype* A, int N, int target)
    return l;
 } 
 
-
-
-// void merge(keytype* A, int N, keytype* tmp) {
-//    int i = 0;
-//    int j = N/2;
-//    int ti = 0;
-
-//    while (i < N/2 && j < N) {
-//       if (A[i] < A[j]) {
-//          tmp[ti] = A[i];
-//          ti++; 
-//          i++;
-//       } 
-//       else {
-//          tmp[ti] = A[j];
-//          ti++; 
-//          j++;
-//       }
-//    }
-//    while (i < N/2) {
-//       tmp[ti] = A[i];
-//       ti++; 
-//       i++;
-//    }
-//    while (j < N) {
-//       tmp[ti] = A[j];
-//       ti++; 
-//       j++;
-//    }
-//    memcpy(A, tmp, N*sizeof(keytype));
-
-// } 
-
+// Serial merge function
+// Merge N1 elements start from A1 and N2 elements start from A2
+// Save the merge result in (N1+N2) locations start form tmp
 void merge(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
    int i = 0;
    int j = 0;
@@ -96,25 +66,32 @@ void merge(keytype* A1, keytype* A2, int N1, int N2, keytype* tmp) {
 
 }
 
+// Parallel merge function
+// Merge a elements start from A and b elements start from B
+// Save the merge result in (a+b) locations start from tmp
 void Pmerge(keytype* A, keytype* B, int a, int b, keytype* tmp){
-   if (a+b < 3000){
-      merge2(A, B, a, b, tmp);
-   }
-   else{
+    if (a+b < 3000){     // If input is too small, use serial merge
+        merge(A, B, a, b, tmp);
+    }
+    else{    
+        // Break A at index midA, two parts of A have size a1 and a2
+        // Break B at index midB, two parts of B have size b1 and b2
+        int midA = a / 2;
+        int midB = binarySearch(B, b, A[midA]);
+        int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
 
-      int midA = a / 2;
-      int midB = binarySearch(B, b, A[midA]);
-      int a1 = midA, a2 = a - midA, b1 = midB, b2 = b - midB;
-      if (midB == b - 1 && B[midB] <= A[midA]){
-         b1 = b;
-         b2 = 0;
-      }
-      #pragma omp task
-      Pmerge2(A, B, a1, b1, tmp);
-      #pragma omp task
-      Pmerge2(A+a1, B+b1, a2, b2, tmp+a1+b1);
-      #pragma omp taskwait
-      //memcpy(A, tmp, (a+b)*sizeof(keytype));
+        if (midB == b - 1 && B[midB] <= A[midA]){ //Deal with binary search corner case
+            b1 = b;
+            b2 = 0;
+        }
+
+        // Parallelize work on two smaller merge problems
+        #pragma omp task
+        Pmerge(A, B, a1, b1, tmp);
+        #pragma omp task
+        Pmerge(A+a1, B+b1, a2, b2, tmp+a1+b1);
+        #pragma omp taskwait
+
    }
 
 }
