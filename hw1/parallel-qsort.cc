@@ -106,9 +106,6 @@ int partition2 (keytype pivot, int N, keytype* A){
 
   Pscan(leq, N);
   Pscan(gt, N);
-  for (int i = 0; i < N; i++){
-    std::cout<<leq[i];    
-  }
 
 
 
