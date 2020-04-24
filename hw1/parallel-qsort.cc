@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sort.hh"
-//#include <omp.h>
+#include <omp.h>
 #include <cstring>
 #include <iostream>
 #include <cmath>
@@ -18,6 +18,9 @@
  *   partitioned output. It also returns the index n_le such that
  *   (A[0:(k-1)] == A_le) and (A[k:(N-1)] == A_gt).
  */
+
+
+// Parallel scan function (inclusive)
 void Pscan(int *A, int N){
   int *curr = new int[N];
   int *prev = A;
@@ -30,7 +33,7 @@ void Pscan(int *A, int N){
   for (i = 0; i < imax; i++){
       #pragma omp parallel for shared(N, curr, prev, stride) private(j)
       for (j = 0; j < N; j++){
-          if (j < stride){
+          if (j < stride){ // Skip stride iterations at each level
               curr[j] = prev[j];
           }
           else{
@@ -72,14 +75,17 @@ int partition (keytype pivot, int N, keytype* A)
   return k;
 }
 
-int partition2 (keytype pivot, int N, keytype* A){
-  //keytype tmp[N];
+// Parallel partition function
+// Input array A with size N
+// Return index k so that A[0:(k-1)] <= pivot and A[k:N-1] > pivot
+int Ppartition (keytype pivot, int N, keytype* A){
   
-  int *leq = new int[N]();
+  int *leq = new int[N](); 
   int *gt = new int[N]();
 
   int i;
-  //std::cout<<"partition"<<level<<"|"<<omp_get_num_threads()<<std::endl;
+
+  // STEP1
   #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
     if (A[i] <= pivot){
@@ -90,16 +96,12 @@ int partition2 (keytype pivot, int N, keytype* A){
     }
   }
 
-  // //std::cout<<std::endl<<"-----------"<<std::endl;
-  // for (i = 1; i < N; i++){
-  //   leq[i] = leq[i-1] + leq[i];
-  //   gt[i] = gt[i-1] + gt[i];
-  // }
-
+  // STEP2
+  // Scan leq and gt array, so that the value at an index means its index at the original array A
   Pscan(leq, N);
   Pscan(gt, N);
 
-
+  //STEP3
   keytype *tmp = new keytype[N];
   #pragma omp parallel for shared(A, N, leq, gt, pivot) private(i)
   for (i = 0; i < N; i++){
@@ -111,14 +113,11 @@ int partition2 (keytype pivot, int N, keytype* A){
     }
   }
 
-
   memcpy(A, tmp, N * sizeof(keytype));
   int rval = N - gt[N-1];
   if (leq != NULL)  delete [] leq;
   if (gt != NULL) delete [] gt;
   if (tmp != NULL)  delete [] tmp;
-  // if (leq_psum != NULL)  delete [] leq_psum;
-  // if (gt_psum != NULL)  delete [] gt_psum;  
   return rval;
 }
 
@@ -131,10 +130,10 @@ void quickSort (int N, keytype* A)
     // Choose pivot at random
     keytype pivot = A[rand () % N];
 
-    // Partition around the pivot. Upon completion, n_less, n_equal,
-    // and n_greater should each be the number of keys less than,
-    // equal to, or greater than the pivot, respectively. Moreover, the array
-    int n_le = partition2 (pivot, N, A);
+    // Partition A in parallel
+    int n_le = Ppartition (pivot, N, A);
+
+    // Create tasks on smaller problems
     #pragma omp task
     quickSort (n_le, A);
     #pragma omp task
@@ -152,6 +151,5 @@ void mySort (int N, keytype* A)
   }
 }
 
-/* eof */
 
 
