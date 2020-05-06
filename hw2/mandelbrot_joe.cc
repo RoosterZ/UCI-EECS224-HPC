@@ -61,9 +61,9 @@ main (int argc, char* argv[])
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int *data;
   if(rank == 0){
-    gil::rgb8_image_t img(height, width);
-    auto img_view = gil::view(img);
+
     int *data = (int*) malloc(sizeof(int) * width * height);
   }
   int num_rows = floor(height / float(size));
@@ -89,6 +89,8 @@ main (int argc, char* argv[])
   // MPI_Gather(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   //           void *recvbuf, int width * height, MPI_Datatype recvtype, int root, MPI_Comm comm)
   if (rank == 0){
+    gil::rgb8_image_t img(height, width);
+    auto img_view = gil::view(img);
     for(int i = 0; i < num_rows * size; i++){
       for(int j = 0; j < width; j++){
         img_view(j, i) = render(data[i * width + j] / 512.0);
