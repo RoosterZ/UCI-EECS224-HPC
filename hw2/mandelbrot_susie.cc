@@ -78,6 +78,9 @@ try_once(int width, int height){
     i = 0;
     j = 0;
     for(k = 0; k < parsz; k++){
+      if(i >= size * num_rows){
+        std::cout<<i<<"  "<<j<<std::endl;
+      }
       img_view(j, i) = render(data[k] / 512.0);
       j++;
       if(j >= width){
