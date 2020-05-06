@@ -87,20 +87,20 @@ main (int argc, char* argv[])
   }
 
   MPI_Barrier(MPI_COMM_WORLD);
-  MPI_Gather(buf, bufsz, MPI_INT, data, parsz, MPI_INT, 0, MPI_COMM_WORLD);
-  // MPI_Gather(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
-  //           void *recvbuf, int width * height, MPI_Datatype recvtype, int root, MPI_Comm comm)
-  // if (rank == 0){
-  //   gil::rgb8_image_t img(height, width);
-  //   auto img_view = gil::view(img);
-  //   for(int i = 0; i < num_rows * size; i++){
-  //     for(int j = 0; j < width; j++){
-  //       img_view(j, i) = render(data[i * width + j] / 512.0);
-  //     }
-  //   }
-  //   gil::png_write_view("mandelbrot.png", const_view(img));
+  MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Gather(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+            void *recvbuf, int width * height, MPI_Datatype recvtype, int root, MPI_Comm comm)
+  if (rank == 0){
+    gil::rgb8_image_t img(height, width);
+    auto img_view = gil::view(img);
+    for(int i = 0; i < num_rows * size; i++){
+      for(int j = 0; j < width; j++){
+        img_view(j, i) = render(data[i * width + j] / 512.0);
+      }
+    }
+    gil::png_write_view("mandelbrot.png", const_view(img));
 
-  // }
+  }
 
   MPI_Finalize();
   return 0; 
