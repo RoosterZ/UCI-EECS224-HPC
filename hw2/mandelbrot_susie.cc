@@ -90,11 +90,11 @@ try_once(int width, int height){
 
     }
 
-    for(int i = 0; i < num_rows * size; i++){
-      for(int j = 0; j < width; j++){
-        img_view(j, i) = render(data[j * width + i] / 512.0);
-      }
-    }
+    // for(int i = 0; i < num_rows * size; i++){
+    //   for(int j = 0; j < width; j++){
+    //     img_view(j, i) = render(data[j * width + i] / 512.0);
+    //   }
+    // }
     gil::png_write_view("mandelbrot.png", const_view(img));
 
   }
