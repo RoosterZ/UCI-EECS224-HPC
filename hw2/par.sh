@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Joe
-#$ -q class16
-#$ -pe mpi 12
+#$ -q class
+#$ -pe mpi 8
 #$ -R y
 
 # Grid Engine Notes:
