@@ -68,7 +68,7 @@ try_once(int width, int height){
     y += it;
   }
 
-  //MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(MPI_COMM_WORLD);
   MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
 
   if (rank == 0){
