@@ -71,14 +71,14 @@ main(int argc, char* argv[]) {
     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
     return -1;
   }
-
+  MPI_Init(&argc, &argv);
   double start_time = MPI_Wtime();
   for (int i = 0; i < trial; i++){
     try_once(width, height);
   }
   std::cout << ( MPI_Wtime() - start_time ) / trial << std::endl; 
-
-
+  MPI_Finalize();
+  return 0;
 }
 
 /* eof */
