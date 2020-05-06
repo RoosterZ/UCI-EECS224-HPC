@@ -105,9 +105,11 @@ main (int argc, char* argv[])
   double start_time = MPI_Wtime();
   for (int i = 0; i < trial; i++){
     try_once(width, height);
+    MPI_Barrier (MPI_COMM_WORLD);
   }
-  std::cout<<(MPI_Wtime() - start_time) / trial<<std::endl;
-
+  if(rank == 0){
+    std::cout<<(MPI_Wtime() - start_time) / trial<<std::endl;
+  }
   MPI_Finalize();
   return 0; 
   
