@@ -8,7 +8,9 @@
 #include <cstdlib>
 
 #include "render.hh"
+#include <mpi.h>
 #include <math.h>
+
 
 using namespace std;
 
