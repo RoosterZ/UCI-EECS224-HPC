@@ -1,5 +1,5 @@
 /**
- *  \file mandelbrot_susie.cc
+ *  \file mandelbrot_joe.cc
  *
  *  \brief Implement your parallel mandelbrot set in this file.
  */
@@ -53,30 +53,30 @@ try_once(int width, int height){
   }
   int num_rows = floor(height / float(size));
 
-  int parsz = width * size * num_rows;
+  //int parsz = width * size * num_rows;
   int bufsz = width * num_rows;
 
   int *buf = (int*) malloc(sizeof(int) * bufsz);
 
-  y = minY + rank * num_rows * it;
+  y = minY + rank * it;
   for (int i = 0; i < num_rows; ++i) {
     x = minX;
     for (int j = 0; j < width; ++j) {
       buf[i * width + j] = mandelbrot(x, y);
       x += jt;
     }
-    y += it;
+    y += it * size;
   }
 
-  //MPI_Barrier(MPI_COMM_WORLD);
   MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
 
   if (rank == 0){
     gil::rgb8_image_t img(height, width);
     auto img_view = gil::view(img);
+
     for(int i = 0; i < num_rows * size; i++){
       for(int j = 0; j < width; j++){
-        img_view(j, i) = render(data[i * width + j] / 512.0);
+        img_view(j, i) = render(data[j * width + i] / 512.0);
       }
     }
     gil::png_write_view("mandelbrot.png", const_view(img));
