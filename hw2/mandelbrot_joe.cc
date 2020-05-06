@@ -10,6 +10,7 @@
 #include "render.hh"
 #include <mpi.h>
 #include <math.h>
+#include <assert.h>
 
 
 using namespace std;
@@ -61,10 +62,11 @@ main (int argc, char* argv[])
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  int *data;
+  int* data = NULL;
   if(rank == 0){
 
-    int *data = (int*) malloc(sizeof(int) * width * height);
+    data = (int*) malloc(sizeof(int) * width * height);
+    assert(data != NULL);
   }
   int num_rows = floor(height / float(size));
 
