@@ -35,5 +35,7 @@ clean:
 cr:
 	rm -f Mandelbrot.*
 	rm -f *.png
+	rm -f *.o*
+	rm -f *.e*
 
 # eof
