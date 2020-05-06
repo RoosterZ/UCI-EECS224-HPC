@@ -17,4 +17,4 @@ module load boost/1.57.0
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -np 12 -ppn 12  ./mandelbrot_joe 1000 1000 6
+mpirun -np 12 -ppn 12  ./mandelbrot_joe 1000 1000 8
