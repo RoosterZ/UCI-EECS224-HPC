@@ -85,7 +85,7 @@ main (int argc, char* argv[])
   }
 
 
-  MPI_Gather(buf, bufsz, MPI_INT, data, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Gather(buf, bufsz, MPI_INT, data, parsz, MPI_INT, 0, MPI_COMM_WORLD);
   // MPI_Gather(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   //           void *recvbuf, int width * height, MPI_Datatype recvtype, int root, MPI_Comm comm)
   if (rank == 0){
