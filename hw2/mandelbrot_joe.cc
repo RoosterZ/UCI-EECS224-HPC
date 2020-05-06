@@ -101,6 +101,10 @@ main (int argc, char* argv[])
     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
     return -1;
   }
+  int rank, size;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Barrier (MPI_COMM_WORLD);
   double start_time = MPI_Wtime();
   for (int i = 0; i < trial; i++){
@@ -108,7 +112,7 @@ main (int argc, char* argv[])
     MPI_Barrier (MPI_COMM_WORLD);
   }
   if(rank == 0){
-    std::cout<<(MPI_Wtime() - start_time) / trial<<std::endl;
+    std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
   }
   MPI_Finalize();
   return 0; 
