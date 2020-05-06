@@ -17,4 +17,4 @@ module load boost/1.57.0
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -np 1  ./mandelbrot_serial 1000 1000
+mpirun -np 1  ./mandelbrot_serial 1000 1000 7
