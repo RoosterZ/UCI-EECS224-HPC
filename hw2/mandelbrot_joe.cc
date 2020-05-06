@@ -68,7 +68,7 @@ try_once(int width, int height){
     y += it;
   }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  //MPI_Barrier(MPI_COMM_WORLD);
   MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
 
   if (rank == 0){
@@ -111,7 +111,7 @@ main (int argc, char* argv[])
     try_once(width, height);
     MPI_Barrier (MPI_COMM_WORLD);
   }
-  MPI_Barrier (MPI_COMM_WORLD);
+  //MPI_Barrier (MPI_COMM_WORLD);
   if(rank == 0){
     std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
   }
