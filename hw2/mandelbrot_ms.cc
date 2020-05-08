@@ -56,12 +56,12 @@ try_once(int width, int height){
     int curr = size;
     data = (int*) malloc(sizeof(int) * height);
     for (i = 0; i < size; i++){
-      MPI_lsend(&i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-      MPI_lrecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+      MPI_Isend(&i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
     }
     while(true){
       for (i = 0; i < size; i++){
-        MPI_Test(req + i; flag + i; stat + i);
+        MPI_Test(req + i, flag + i, stat + i);
         if (flag[i]){
           curr += 1;
           if (curr >= size + height){
@@ -72,11 +72,11 @@ try_once(int width, int height){
             //stat[i] = MPI_Status;
             //req[i] = MPI_Request;
             flag[i] = false;
-            MPI_lsend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-            MPI_lrecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
           }
           else{
-            MPI_lsend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
           }
         }
       }
@@ -88,12 +88,12 @@ try_once(int width, int height){
   }
   else{
     while (true){
-      MPI_recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD); 
+      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD); 
       if (row >= height){
         break;
       }
       row = -row;
-      MPI_send(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+      MPI_Send(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
 
     
