@@ -90,7 +90,7 @@ try_once(int width, int height){
   else{
     MPI_Status stat;
     while (true){
-      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, stat); 
+      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stat); 
       if (row >= height){
         break;
       }
