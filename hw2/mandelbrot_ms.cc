@@ -38,31 +38,32 @@ try_once(int width, int height){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  
+  MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
   int *data, row = 0;
   if (rank == 0){
     //int flag = 0;
-    bool *flag = (bool*) malloc(sizeof(bool) * size);
+    int *flag = (int*) malloc(sizeof(int) * size);
 
     // vector<MPI_Request> req(rank, )
     MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
-    MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
 
-    memset(flag, false, size);
+
+    memset(flag, 0, size);
     // memset(req, MPI_Request, size);
     // memset(stat, MPI_Status, size);
     int i;
     int curr = size;
     data = (int*) malloc(sizeof(int) * height);
     for (i = 0; i < size; i++){
-      MPI_Isend(&i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_Isend(&i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
       MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
     }
     while(true){
       for (i = 0; i < size; i++){
         MPI_Test(req + i, flag + i, stat + i);
-        if (flag[i]){
+        if (flag[i] == 1){
           curr += 1;
           if (curr >= size + height){
             break;
@@ -71,12 +72,12 @@ try_once(int width, int height){
           if (curr < height){
             //stat[i] = MPI_Status;
             //req[i] = MPI_Request;
-            flag[i] = false;
-            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            flag[i] = 0;
+            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, pub_req, send_req + i);
             MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
           }
           else{
-            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
           }
         }
       }
@@ -88,7 +89,7 @@ try_once(int width, int height){
   }
   else{
     while (true){
-      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD); 
+      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, stat + i); 
       if (row >= height){
         break;
       }
