@@ -38,12 +38,12 @@ try_once(int width, int height){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
+  
   int *data, row = 0;
   if (rank == 0){
     //int flag = 0;
     int *flag = (int*) malloc(sizeof(int) * size);
-
+    MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
     MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
     MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
@@ -73,7 +73,7 @@ try_once(int width, int height){
             //stat[i] = MPI_Status;
             //req[i] = MPI_Request;
             flag[i] = 0;
-            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, pub_req, send_req + i);
+            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
             MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
           }
           else{
@@ -88,8 +88,9 @@ try_once(int width, int height){
   
   }
   else{
+    MPI_Status stat;
     while (true){
-      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, stat + i); 
+      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, stat); 
       if (row >= height){
         break;
       }
