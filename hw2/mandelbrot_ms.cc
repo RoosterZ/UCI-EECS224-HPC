@@ -50,8 +50,8 @@ try_once(int width, int height){
     MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
 
     memset(flag, false, size);
-    memset(req, MPI_Request, size);
-    memset(stat, MPI_Status, size);
+    // memset(req, MPI_Request, size);
+    // memset(stat, MPI_Status, size);
     int i;
     int curr = size;
     data = (int*) malloc(sizeof(int) * height);
@@ -69,8 +69,8 @@ try_once(int width, int height){
           }
           
           if (curr < height){
-            stat[i] = MPI_Status;
-            req[i] = MPI_Request;
+            //stat[i] = MPI_Status;
+            //req[i] = MPI_Request;
             flag[i] = false;
             MPI_lsend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
             MPI_lrecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
