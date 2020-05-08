@@ -7,10 +7,135 @@
 #include <iostream>
 #include <cstdlib>
 
+#include "render.hh"
+#include <mpi.h>
+#include <math.h>
+#include <assert.h>
+
+
+using namespace std;
+
+int
+mandelbrot(double x, double y) {
+  int maxit = 511;
+  double cx = x;
+  double cy = y;
+  double newx, newy;
+
+  int it = 0;
+  for (it = 0; it < maxit && (x*x + y*y) < 4; ++it) {
+    newx = x*x - y*y + cx;
+    newy = 2*x*y + cy;
+    x = newx;
+    y = newy;
+  }
+  return it;
+}
+
+void
+try_once(int width, int height){
+  int rank, size;
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+  
+  int *data, row = 0;
+  if (rank == 0){
+    //int flag = 0;
+    bool *flag = (bool*) malloc(sizeof(bool) * size);
+
+    // vector<MPI_Request> req(rank, )
+    MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+
+    MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
+
+    memset(flag, false, size);
+    memset(req, MPI_Request, size);
+    memset(stat, MPI_Status, size);
+    int i;
+    int curr = size;
+    data = (int*) malloc(sizeof(int) * height);
+    for (i = 0; i < size; i++){
+      MPI_lsend(&i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_lrecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+    }
+    while(true){
+      for (i = 0; i < size; i++){
+        MPI_Test(req + i; flag + i; stat + i);
+        if (flag[i]){
+          curr += 1;
+          if (curr >= size + height){
+            break;
+          }
+          
+          if (curr < height){
+            stat[i] = MPI_Status;
+            req[i] = MPI_Request;
+            flag[i] = false;
+            MPI_lsend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_lrecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+          }
+          else{
+            MPI_lsend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+          }
+        }
+      }
+    }
+    for (i = 0; i < height; i++){
+      std::cout << data[i] << std::endl;
+    }
+  
+  }
+  else{
+    while (true){
+      MPI_recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD); 
+      if (row >= height){
+        break;
+      }
+      row = -row;
+      MPI_send(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
+
+    
+  }
+
+
+
+
+}
+
+
 int
 main (int argc, char* argv[])
 {
-  /* Lucky you, you get to write MPI code */
+  int height, width, trial;
+  if (argc == 4) {
+    height = atoi (argv[1]);
+    width = atoi (argv[2]);
+    trial = atoi (argv[3]);
+    assert (height > 0 && width > 0 && trial > 0);
+  } else {
+    fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
+    fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
+    return -1;
+  }
+  int rank, size;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Barrier (MPI_COMM_WORLD);
+  double start_time = MPI_Wtime();
+  for (int i = 0; i < trial; i++){
+    try_once(width, height);
+    MPI_Barrier (MPI_COMM_WORLD);
+  }
+  if(rank == 0){
+    std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
+  }
+  MPI_Finalize();
+  return 0; 
+  
+
 }
 
 /* eof */
