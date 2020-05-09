@@ -38,24 +38,23 @@ try_once(int width, int height){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  
+  MPI_Status stat;
   int *data, row = 0;
   if (rank == 0){
     //int flag = 0;
     int *job_assignment = (int*) malloc(sizeof(int) * size);
-    int *flag = (int*) malloc(sizeof(int) * size);
-    MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
+    //int *flag = (int*) malloc(sizeof(int) * size);
+    //MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
-    MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
-    MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    //MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    //MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
-    memset(flag, 0, size);
+    //memset(flag, 0, size);
     // memset(req, MPI_Request, size);
     // memset(stat, MPI_Status, size);
-    int i;
     int curr = 0;
     data = (int*) malloc(sizeof(int) * height);
-    for (i = 1; i < size; i++){
+    for (int i = 1; i < size; i++){
       job_assignment[i] = curr;
       MPI_Send(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
       MPI_Recv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
@@ -90,7 +89,7 @@ try_once(int width, int height){
   
   }
   else{
-    MPI_Status stat;
+
     
       MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stat); 
       // if (row >= height){
