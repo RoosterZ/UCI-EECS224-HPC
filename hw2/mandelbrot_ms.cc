@@ -42,67 +42,71 @@ try_once(int width, int height){
   int *data, row = 0;
   if (rank == 0){
     //int flag = 0;
+    int *job_assignment = (int*) malloc(sizeof(int) * size);
     int *flag = (int*) malloc(sizeof(int) * size);
     MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
     MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
     MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
-
-
     memset(flag, 0, size);
     // memset(req, MPI_Request, size);
     // memset(stat, MPI_Status, size);
     int i;
-    int curr = size;
+    int curr = 0;
     data = (int*) malloc(sizeof(int) * height);
-    for (i = 0; i < size; i++){
-      MPI_Isend(&i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+    for (i = 1; i < size; i++){
+      job_assignment[i] = curr;
+      MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
       MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+      curr++;
     }
-    while(true){
-      for (i = 0; i < size; i++){
-        MPI_Test(req + i, flag + i, stat + i);
-        if (flag[i] == 1){
-          curr += 1;
-          if (curr >= size + height){
-            break;
-          }
+    // while(true){
+    //   for (i = 0; i < size; i++){
+    //     MPI_Test(req + i, flag + i, stat + i);
+    //     if (flag[i] == 1){
+    //       curr += 1;
+    //       if (curr >= size + height){
+    //         break;
+    //       }
           
-          if (curr < height){
-            //stat[i] = MPI_Status;
-            //req[i] = MPI_Request;
-            flag[i] = 0;
-            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-            MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
-          }
-          else{
-            MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-          }
-        }
-      }
-    }
-    for (i = 0; i < height; i++){
-      std::cout << data[i] << std::endl;
-    }
+    //       if (curr < height){
+    //         //stat[i] = MPI_Status;
+    //         //req[i] = MPI_Request;
+    //         flag[i] = 0;
+    //         MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+    //         MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+    //       }
+    //       else{
+    //         MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+    //       }
+    //     }
+    //   }
+    // }
+
+    // for (i = 0; i < height; i++){
+    //   std::cout << data[i] << std::endl;
+    // }
   
   }
   else{
     MPI_Status stat;
-    while (true){
+    
       MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stat); 
-      if (row >= height){
-        break;
-      }
+      // if (row >= height){
+      //   break;
+      // }
       row = -row;
       MPI_Send(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-    }
-
     
   }
-
-
-
+  //MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Waitall();
+  if (rank == 0){
+    for (i = 1; i < size; i++){
+      std::cout << data[i] << std::endl;
+    }
+  }
 
 }
 
@@ -129,7 +133,7 @@ main (int argc, char* argv[])
   double start_time = MPI_Wtime();
   for (int i = 0; i < trial; i++){
     try_once(width, height);
-    MPI_Barrier (MPI_COMM_WORLD);
+    MPI_Barrier (MPI_COMM_WORLD)；
   }
   if(rank == 0){
     std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
