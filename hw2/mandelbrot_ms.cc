@@ -44,9 +44,9 @@ try_once(int width, int height){
     //int flag = 0;
     int *job_assignment = (int*) malloc(sizeof(int) * size);
     //int *flag = (int*) malloc(sizeof(int) * size);
-    //MPI_Status *stat = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
+    MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
-    //MPI_Request *req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    MPI_Request *req_list = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
     //MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
     //memset(flag, 0, size);
@@ -57,7 +57,7 @@ try_once(int width, int height){
     for (int i = 1; i < size; i++){
       job_assignment[i] = curr;
       MPI_Send(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-      MPI_Recv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &stat);
+      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
       curr++;
     }
     // while(true){
@@ -86,6 +86,8 @@ try_once(int width, int height){
     // for (i = 0; i < height; i++){
     //   std::cout << data[i] << std::endl;
     // }
+    MPI_Waitall(size-1, req_list+1, stat_list+1);
+    
   
   }
   else{
