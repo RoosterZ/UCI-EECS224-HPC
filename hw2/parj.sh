@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Joe
 #$ -q pub8i
-#$ -pe mpi 16
+#$ -pe mpi 8
 #$ -R y
 
 # Grid Engine Notes:
@@ -17,4 +17,4 @@ module load boost/1.57.0
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -np 16 -ppn 8  ./mandelbrot_joe 1000 1000 8
+mpirun -np 8 -ppn 8  ./mandelbrot_joe 1000 1000 8
