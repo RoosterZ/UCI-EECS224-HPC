@@ -57,7 +57,7 @@ try_once(int width, int height){
     for (int i = 1; i < size; i++){
       job_assignment[i] = curr;
       MPI_Send(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-      MPI_Recv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_Recv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &stat);
       curr++;
     }
     // while(true){
