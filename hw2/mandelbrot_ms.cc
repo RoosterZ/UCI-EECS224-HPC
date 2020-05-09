@@ -101,7 +101,7 @@ try_once(int width, int height){
     
   }
   //MPI_Barrier(MPI_COMM_WORLD);
-  MPI_Waitall(MPI_COMM_WORLD);
+  //MPI_Waitall(MPI_COMM_WORLD);
 
   if (rank == 0){
     for (i = 1; i < size; i++){
