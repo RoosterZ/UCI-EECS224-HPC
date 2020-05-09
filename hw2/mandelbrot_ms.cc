@@ -57,8 +57,8 @@ try_once(int width, int height){
     data = (int*) malloc(sizeof(int) * height);
     for (i = 1; i < size; i++){
       job_assignment[i] = curr;
-      MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+      MPI_send(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_recv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
       curr++;
     }
     // while(true){
@@ -101,7 +101,8 @@ try_once(int width, int height){
     
   }
   //MPI_Barrier(MPI_COMM_WORLD);
-  MPI_Waitall();
+  MPI_Waitall(MPI_COMM_WORLD);
+
   if (rank == 0){
     for (i = 1; i < size; i++){
       std::cout << data[i] << std::endl;
@@ -133,7 +134,7 @@ main (int argc, char* argv[])
   double start_time = MPI_Wtime();
   for (int i = 0; i < trial; i++){
     try_once(width, height);
-    MPI_Barrier (MPI_COMM_WORLD)；
+    MPI_Barrier (MPI_COMM_WORLD);
   }
   if(rank == 0){
     std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
