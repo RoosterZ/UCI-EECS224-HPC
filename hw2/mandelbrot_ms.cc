@@ -57,7 +57,7 @@ try_once(int width, int height){
     for (int i = 1; i < size; i++){
       job_assignment[i] = curr;
       MPI_Send(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req_list + i);
       curr++;
     }
     // while(true){
@@ -87,7 +87,7 @@ try_once(int width, int height){
     //   std::cout << data[i] << std::endl;
     // }
     MPI_Waitall(size-1, req_list+1, stat_list+1);
-    
+
   
   }
   else{
