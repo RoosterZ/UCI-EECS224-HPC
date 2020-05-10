@@ -43,13 +43,18 @@ try_once(int width, int height){
   if (rank == 0){
     //int flag = 0;
     int *job_assignment = (int*) malloc(sizeof(int) * size);
-    int *flag = (int*) malloc(sizeof(int) * size);
-    MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
+    //int *flag = (int*) malloc(sizeof(int) * size);
+    //MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
-    MPI_Request *recv_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
-    MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    //MPI_Request *recv_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    //MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
-    memset(flag, 0, size);
+    int flag[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    MPI_Status stat_list[8];
+    MPI_Request recv_req[8];
+    MPI_Request send_req[8];
+
+    //memset(flag, 0, size);
     // memset(req, MPI_Request, size);
     // memset(stat, MPI_Status, size);
     int curr = 0;
@@ -90,7 +95,7 @@ try_once(int width, int height){
     //MPI_Waitall(size-1, recv_req+1, stat_list+1);
     
     int rem = size - 1;
-    while(rem > 0){
+    while(rem  > 4 ){
       for (int i = 1; i < size - 1; i++){
         if (flag[i] == 1){
           continue;
