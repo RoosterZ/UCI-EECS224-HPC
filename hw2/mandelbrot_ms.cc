@@ -56,7 +56,7 @@ try_once(int width, int height){
     data = (int*) malloc(sizeof(int) * height);
     for (int i = 1; i < size; i++){
       job_assignment[i] = curr;
-      MPI_ISend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+      MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
       MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
       curr++;
     }
