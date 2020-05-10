@@ -84,14 +84,16 @@ try_once(int width, int height){
           //MPI_Irecv(data + curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
           rem--;
         }
-    }
+      }
 
-    MPI_Waitall(size-1, send_req+1, stat_list+1);
+      MPI_Waitall(size-1, send_req+1, stat_list+1);
 
-    for (int i = 0; i < height; i++){
-      std::cout << data[i] << std::endl;
-    }
+      for (int i = 0; i < height; i++){
+        std::cout << data[i] << std::endl;
+      } 
   
+    }
+
   }
   else{
 
