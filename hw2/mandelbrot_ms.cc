@@ -38,100 +38,113 @@ try_once(int width, int height){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  MPI_Status stat;
-  int *data, row = 0;
   if (rank == 0){
-    //int flag = 0;
+
+    int i, curr = 0;
+
+    int *flag = (int*) malloc(sizeof(int) * size);
+    int *data = (int*) malloc(sizeof(int) * height * width);
     int *job_assignment = (int*) malloc(sizeof(int) * size);
-    //int *flag = (int*) malloc(sizeof(int) * size);
-    //MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
-    // vector<MPI_Request> req(rank, )
-    //MPI_Request *recv_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
-    //MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
+    MPI_Request *recv_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
+    MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
-    int flag[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    MPI_Status stat_list[8];
-    MPI_Request recv_req[8];
-    MPI_Request send_req[8];
-
-    //memset(flag, 0, size);
-    // memset(req, MPI_Request, size);
-    // memset(stat, MPI_Status, size);
-    int curr = 0;
-    data = (int*) malloc(sizeof(int) * height);
-    for (int i = 1; i < size; i++){
-      job_assignment[i] = curr;
-      MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
-      curr++;
+    if(job_assignment == NULL || flag == NULL || stat_list == NULL || recv_req == NULL || send_req == NULL ){
+      std::cout<<"null " << rank << std::endl;
     }
-    // while(true){
-    //   for (i = 0; i < size; i++){
-    //     MPI_Test(req + i, flag + i, stat + i);
-    //     if (flag[i] == 1){
-    //       curr += 1;
-    //       if (curr >= size + height){
-    //         break;
-    //       }
-          
-    //       if (curr < height){
-    //         //stat[i] = MPI_Status;
-    //         //req[i] = MPI_Request;
-    //         flag[i] = 0;
-    //         MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-    //         MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
-    //       }
-    //       else{
-    //         MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-    //       }
-    //     }
-    //   }
-    // }
 
-    // for (i = 0; i < height; i++){
-    //   std::cout << data[i] << std::endl;
-    // }
-
-    //MPI_Waitall(size-1, recv_req+1, stat_list+1);
-    
-    int rem = size - 1;
-    while(rem  > 4 ){
-      for (int i = 1; i < size - 1; i++){
+    for (i = 0; i < size; i++){
+      flag[i] = 1;
+      job_assignment[i] = -2;
+    }
+    while(curr < height){
+      for (i = 1; i < size; i++){
+        if (job_assignment[i] != -2){
+          MPI_Test(recv_req + i, flag + i, stat_list + i);
+        }
         if (flag[i] == 1){
+          flag[i] = 0;
+          job_assignment[i] = curr;
+          std::cout<<"assign " << curr << "to" << i <<std::endl;
+          MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+          MPI_Irecv(data + curr * width, width, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
+          curr++;
+          if (curr == height){
+            break;
+          }
+        }
+
+      }
+    }
+
+    int rem = size - 1;
+    while (rem > 0){
+      for (int i = 1; i < size; i++){
+        if (job_assignment[i] == -1){
           continue;
         }
         MPI_Test(recv_req + i, flag + i, stat_list + i);
         if (flag[i] == 1){
-          rem--; 
-          if (rem == 0){
-            break;
-          }
+          flag[i] = 0;
+          job_assignment[i] = -1;
+          MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+          //MPI_Irecv(data + curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
+          rem--;
         }
       }
-
     }
-    
+    // for (int i = 0; i < height * width; i++){
+    //     std::cout << data[i] << std::endl;
+    // } 
 
-  
+    gil::rgb8_image_t img(height, width);
+    auto img_view = gil::view(img);
+    for(int i = 0; i < height; i++){
+      for(int j = 0; j < width; j++){
+        img_view(j, i) = render(data[i * width + j] / 512.0);
+      }
+    }
+    gil::png_write_view("mandelbrot.png", const_view(img));
+
+    MPI_Waitall(size-1, send_req+1, stat_list+1);
+
+
+
   }
   else{
-
+    double minX = -2.1;
+    double maxX = 0.7;
+    double minY = -1.25;
+    double maxY = 1.25;
     
-      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stat); 
-      // if (row >= height){
-      //   break;
+    double it = (maxY - minY)/height;
+    double jt = (maxX - minX)/width;
+    double x, y;
+
+    MPI_Status status;
+    int row;
+    int* row_data = (int*) malloc(sizeof(int) * width);
+    while (true){
+      MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status); 
+      if (row == -1){
+        break;
+      }
+
+      y = minY + row * it;
+      // for (int i = 0; i < num_rows; ++i) {
+      //   x = minX;
+      for (int j = 0; j < width; ++j) {
+        row_data[j] = mandelbrot(x, y);
+        x += jt;
+      }
+      // for (int i = 0; i < width; i++){
+      //   row_data[i] = row;
       // }
-      row = -row;
-      MPI_Send(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-    
-  }
-  //MPI_Barrier(MPI_COMM_WORLD);
-  //MPI_Waitall(MPI_COMM_WORLD);
-
-  if (rank == 0){
-    for (int i = 1; i < size; i++){
-      std::cout << data[i] << std::endl;
+      //row = -row;
+      MPI_Send(row_data, width, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
+
+    
   }
 
 }

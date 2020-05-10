@@ -6,6 +6,9 @@
 #include <boost/gil/gil_all.hpp>
 #include <boost/gil/extension/io/png_dynamic_io.hpp>
 
+
+
+
 namespace gil = boost::gil;
 
 /** Construct a color suitable for display. */

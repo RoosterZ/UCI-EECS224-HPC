@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "render.hh"
+// #include "render.hh"
 #include <mpi.h>
 #include <math.h>
 #include <assert.h>
@@ -44,72 +44,93 @@ try_once(int width, int height){
     //int flag = 0;
     int *job_assignment = (int*) malloc(sizeof(int) * size);
     int *flag = (int*) malloc(sizeof(int) * size);
-
     MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
     MPI_Request *recv_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
     MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
-    memset(flag, 1, size);
-    memset(job_assignment, -2, size);    
+    //int flag[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    //MPI_Status stat_list[8];
+    //MPI_Request recv_req[8];
+    //MPI_Request send_req[8];
+
+    memset(flag, 0, size);
     // memset(req, MPI_Request, size);
     // memset(stat, MPI_Status, size);
-    int curr = 0, job;
+    int curr = 0;
     data = (int*) malloc(sizeof(int) * height);
-    while(curr < height){
-      for (int i = 1; i < size; i++){
-        if (job_assignment[i] != -2){
-          MPI_Test(recv_req + i, flag + i, stat_list + i);
-        }
-        if (flag[i] == 1){
-          flag[i] = 0;
-          job_assignment[i] = curr;
-          MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-          MPI_Irecv(data + curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
-          curr++;
-          if (curr == height){
-            break;
-          }
-        }
-
-      }
+    for (int i = 1; i < size; i++){
+      job_assignment[i] = curr;
+      MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+      MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
+      curr++;
     }
+    // while(true){
+    //   for (i = 0; i < size; i++){
+    //     MPI_Test(req + i, flag + i, stat + i);
+    //     if (flag[i] == 1){
+    //       curr += 1;
+    //       if (curr >= size + height){
+    //         break;
+    //       }
+          
+    //       if (curr < height){
+    //         //stat[i] = MPI_Status;
+    //         //req[i] = MPI_Request;
+    //         flag[i] = 0;
+    //         MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+    //         MPI_Irecv(data+i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, req + i);
+    //       }
+    //       else{
+    //         MPI_Isend(&curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
+    //       }
+    //     }
+    //   }
+    // }
+
+    // for (i = 0; i < height; i++){
+    //   std::cout << data[i] << std::endl;
+    // }
+
+    //MPI_Waitall(size-1, recv_req+1, stat_list+1);
+    
     int rem = size - 1;
-    while (rem > 0){
+    for (int i = 1; i < size; i++){
+      std::cout << flag[i] << std::endl;
+
+    }
+    std::cout << "---" << std::endl;
+    while(rem  > 0 ){
       for (int i = 1; i < size; i++){
-        if (job_assignment[i] == -1){
+        if (flag[i] == 1){
           continue;
         }
         MPI_Test(recv_req + i, flag + i, stat_list + i);
         if (flag[i] == 1){
-          flag[i] = 0;
-          job_assignment[i] = -1;
-          MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
-          //MPI_Irecv(data + curr, 1, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
-          rem--;
+          std::cout << "set idx " << i << std::endl;
+          rem--; 
+          if (rem == 0){
+            break;
+          }
         }
       }
 
-      MPI_Waitall(size-1, send_req+1, stat_list+1);
-
-      for (int i = 0; i < height; i++){
-        std::cout << data[i] << std::endl;
-      } 
-  
+    }
+    for (int i = 1; i < size; i++){
+      std::cout << data[i] << std::endl;
     }
 
+  
   }
   else{
 
-    while (true){
+    
       MPI_Recv(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stat); 
-      if (row == -1){
-        break;
-      }
+      // if (row >= height){
+      //   break;
+      // }
       row = -row;
       MPI_Send(&row, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-    }
-
     
   }
   //MPI_Barrier(MPI_COMM_WORLD);
@@ -147,6 +168,7 @@ main (int argc, char* argv[])
   if(rank == 0){
     std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
   }
+  
   MPI_Finalize();
   return 0; 
   
