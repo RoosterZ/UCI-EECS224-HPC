@@ -86,7 +86,7 @@ try_once(int width, int height){
     // for (i = 0; i < height; i++){
     //   std::cout << data[i] << std::endl;
     // }
-    MPI_Waitall(size-1, recv_req+1, stat_list+1);
+    //MPI_Waitall(size-1, recv_req+1, stat_list+1);
 
   
   }
