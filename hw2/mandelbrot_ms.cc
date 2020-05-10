@@ -93,18 +93,18 @@ try_once(int width, int height){
         }
       }
     }
-    // for (int i = 0; i < height * width; i++){
-    //     std::cout << data[i] << std::endl;
-    // } 
+    for (int i = 0; i < height * width; i++){
+        std::cout << data[i] << std::endl;
+    } 
 
-    gil::rgb8_image_t img(height, width);
-    auto img_view = gil::view(img);
-    for(int i = 0; i < height; i++){
-      for(int j = 0; j < width; j++){
-        img_view(j, i) = render(data[i * width + j] / 512.0);
-      }
-    }
-    gil::png_write_view("mandelbrot.png", const_view(img));
+    // gil::rgb8_image_t img(height, width);
+    // auto img_view = gil::view(img);
+    // for(int i = 0; i < height; i++){
+    //   for(int j = 0; j < width; j++){
+    //     img_view(j, i) = render(data[i * width + j] / 512.0);
+    //   }
+    // }
+    // gil::png_write_view("mandelbrot.png", const_view(img));
 
     MPI_Waitall(size-1, send_req+1, stat_list+1);
 
@@ -130,6 +130,7 @@ try_once(int width, int height){
         break;
       }
 
+      x = minX;
       y = minY + row * it;
       // for (int i = 0; i < num_rows; ++i) {
       //   x = minX;
