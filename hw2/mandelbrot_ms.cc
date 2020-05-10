@@ -44,19 +44,23 @@ try_once(int width, int height){
     //int flag = 0;
     int *job_assignment = (int*) malloc(sizeof(int) * size);
     int *flag = (int*) malloc(sizeof(int) * size);
+
     MPI_Status *stat_list = (MPI_Status*) malloc(sizeof(MPI_Status) * size);  
     // vector<MPI_Request> req(rank, )
     MPI_Request *recv_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
     MPI_Request *send_req = (MPI_Request*) malloc(sizeof(MPI_Request) * size);
 
     memset(flag, 1, size);
+    memset(job_assignment, -2, size);    
     // memset(req, MPI_Request, size);
     // memset(stat, MPI_Status, size);
     int curr = 0, job;
     data = (int*) malloc(sizeof(int) * height);
     while(curr < height){
       for (int i = 1; i < size; i++){
-        MPI_Test(recv_req + i, flag + i, stat_list + i);
+        if (job_assignment[i] != -2){
+          MPI_Test(recv_req + i, flag + i, stat_list + i);
+        }
         if (flag[i] == 1){
           flag[i] = 0;
           job_assignment[i] = curr;
