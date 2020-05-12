@@ -88,12 +88,12 @@ try_once(int width, int height){
 int
 main (int argc, char* argv[])
 {
-  int height, width, trial;
+  int start, end, trial;
   if (argc == 4) {
-    height = atoi (argv[1]);
-    width = atoi (argv[2]);
+    start = atoi (argv[1]);
+    end = atoi (argv[2]);
     trial = atoi (argv[3]);
-    assert (height > 0 && width > 0 && trial > 0);
+    assert (start > 0 && end > start && trial > 0);
   } else {
     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
@@ -104,14 +104,21 @@ main (int argc, char* argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Barrier (MPI_COMM_WORLD);
-  double start_time = MPI_Wtime();
-  for (int i = 0; i < trial; i++){
-    try_once(width, height);
+  doule start_time;
+  for (int image_sz = start; image_sz <= end; image_sz = image_sz * 2){
+    if(rank == 0){
+      std::out<<"Joe's apporach"<<std::endl;
+    }    
     MPI_Barrier (MPI_COMM_WORLD);
-  }
-  if(rank == 0){
-    std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
-  }
+    start_time = MPI_Wtime(); 
+    for (int i = 0; i < trial; i++){
+      try_once(image_sz, image_sz);
+      MPI_Barrier (MPI_COMM_WORLD);
+    }
+    if(rank == 0){
+      std::cout<<image_sz<<" * "<<image_sz<<" | "<<(MPI_Wtime() - start_time) / trial <<" s"<< std::endl;
+    }
+  
   MPI_Finalize();
   return 0; 
   
