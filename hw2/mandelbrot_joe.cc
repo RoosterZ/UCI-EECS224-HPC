@@ -104,10 +104,10 @@ main (int argc, char* argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Barrier (MPI_COMM_WORLD);
-  doule start_time;
+  double start_time;
   for (int image_sz = start; image_sz <= end; image_sz = image_sz * 2){
     if(rank == 0){
-      std::out<<"Joe's apporach"<<std::endl;
+      std::cout<<"Joe's apporach"<<std::endl;
     }    
     MPI_Barrier (MPI_COMM_WORLD);
     start_time = MPI_Wtime(); 
@@ -118,9 +118,10 @@ main (int argc, char* argv[])
     if(rank == 0){
       std::cout<<image_sz<<" * "<<image_sz<<" | "<<(MPI_Wtime() - start_time) / trial <<" s"<< std::endl;
     }
-  
+  }
   MPI_Finalize();
   return 0; 
+  
   
 }
 

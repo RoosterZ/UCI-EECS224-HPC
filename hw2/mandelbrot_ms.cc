@@ -173,7 +173,7 @@ main (int argc, char* argv[])
   double start_time;
   for (int image_sz = start; image_sz <= end; image_sz = image_sz * 2){
     if(rank == 0){
-      std::out<<"Master/slave model"<<std::endl;
+      std::cout<<"Master/slave model"<<std::endl;
     }
     MPI_Barrier (MPI_COMM_WORLD);
     start_time = MPI_Wtime();
