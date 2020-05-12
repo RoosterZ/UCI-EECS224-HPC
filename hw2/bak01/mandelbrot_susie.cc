@@ -57,15 +57,15 @@ try_once(int width, int height){
   int bufsz = width * num_rows;
 
   int *buf = (int*) malloc(sizeof(int) * bufsz);
-
-  y = minY + rank * num_rows * it;
-  for (int i = 0; i < num_rows; ++i) {
+  int i, j;
+  y = minY + rank * it;
+  for (i = 0; i < num_rows; ++i) {
     x = minX;
-    for (int j = 0; j < width; ++j) {
+    for (j = 0; j < width; ++j) {
       buf[i * width + j] = mandelbrot(x, y);
       x += jt;
     }
-    y += it;
+    y += it * size;
   }
 
   MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
@@ -73,14 +73,35 @@ try_once(int width, int height){
   if (rank == 0){
     gil::rgb8_image_t img(height, width);
     auto img_view = gil::view(img);
-    for(int i = 0; i < num_rows * size; i++){
-      for(int j = 0; j < width; j++){
-        img_view(j, i) = render(data[i * width + j] / 512.0);
+
+    int k;
+    i = 0;
+    j = 0;
+    for(k = 0; k < parsz; k++){
+      // if(i >= size * num_rows){
+      //   std::cout<<i<<"  "<<j<<std::endl;
+      // }
+      img_view(j, i) = render(data[k] / 512.0);
+      j++;
+      if(j >= width){
+        j = 0;
+        i = i + size;
+        if (i >= size * num_rows){
+          i = (i % size) + 1;
+        }
       }
+
     }
+
+    // for(int i = 0; i < num_rows * size; i++){
+    //   for(int j = 0; j < width; j++){
+    //     img_view(j, i) = render(data[j * width + i] / 512.0);
+    //   }
+    // }
     gil::png_write_view("mandelbrot.png", const_view(img));
 
   }
+
 
 }
 
@@ -115,6 +136,7 @@ main (int argc, char* argv[])
   MPI_Finalize();
   return 0; 
   
+
 }
 
 /* eof */

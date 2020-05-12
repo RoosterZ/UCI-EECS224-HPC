@@ -32,22 +32,39 @@ mandelbrot(double x, double y) {
   return it;
 }
 
-void
-try_once(int width, int height){
+
+int
+main (int argc, char* argv[])
+{
+  /* Lucky you, you get to write MPI code */
   double minX = -2.1;
   double maxX = 0.7;
   double minY = -1.25;
   double maxY = 1.25;
   
+  int height, width;
+  if (argc == 3) {
+    height = atoi (argv[1]);
+    width = atoi (argv[2]);
+    assert (height > 0 && width > 0);
+  } else {
+    fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
+    fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
+    return -1;
+  }
+
   double it = (maxY - minY)/height;
   double jt = (maxX - minX)/width;
   double x, y;
 
-  int* data = NULL;
   int rank, size;
-  MPI_Comm_rank (MPI_COMM_WORLD, &rank);
-  MPI_Comm_size (MPI_COMM_WORLD, &size);
+
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int* data = NULL;
   if(rank == 0){
+
     data = (int*) malloc(sizeof(int) * width * height);
     assert(data != NULL);
   }
@@ -63,11 +80,13 @@ try_once(int width, int height){
     x = minX;
     for (int j = 0; j < width; ++j) {
       buf[i * width + j] = mandelbrot(x, y);
+      //img_view(j, i) = render(mandelbrot(x, y)/512.0);
       x += jt;
     }
     y += it;
   }
 
+  MPI_Barrier(MPI_COMM_WORLD);
   MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
 
   if (rank == 0){
@@ -82,39 +101,10 @@ try_once(int width, int height){
 
   }
 
-}
-
-
-int
-main (int argc, char* argv[])
-{
-  int height, width, trial;
-  if (argc == 4) {
-    height = atoi (argv[1]);
-    width = atoi (argv[2]);
-    trial = atoi (argv[3]);
-    assert (height > 0 && width > 0 && trial > 0);
-  } else {
-    fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
-    fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
-    return -1;
-  }
-  int rank, size;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Barrier (MPI_COMM_WORLD);
-  double start_time = MPI_Wtime();
-  for (int i = 0; i < trial; i++){
-    try_once(width, height);
-    MPI_Barrier (MPI_COMM_WORLD);
-  }
-  if(rank == 0){
-    std::cout << (MPI_Wtime() - start_time) / trial << std::endl;
-  }
   MPI_Finalize();
   return 0; 
   
+
 }
 
 /* eof */
