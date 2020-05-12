@@ -65,7 +65,7 @@ try_once(int width, int height){
         if (flag[i] == 1){
           flag[i] = 0;
           job_assignment[i] = curr;
-          std::cout<<"assign " << curr << "to" << i <<std::endl;
+          //std::cout<<"assign " << curr << "to" << i <<std::endl;
           MPI_Isend(job_assignment + i, 1, MPI_INT, i, 0, MPI_COMM_WORLD, send_req + i);
           MPI_Irecv(data + curr * width, width, MPI_INT, i, 0, MPI_COMM_WORLD, recv_req + i);
           curr++;
