@@ -124,12 +124,12 @@ main (int argc, char* argv[])
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if(rank == 0){
+    std::cout<<"Susie's apporach"<<std::endl;
+  }
   MPI_Barrier (MPI_COMM_WORLD);
   double start_time;
   for (int image_sz = start; image_sz <= end; image_sz = image_sz * 2){
-    if(rank == 0){
-      std::cout<<"Susie's apporach"<<std::endl;
-    }
     MPI_Barrier (MPI_COMM_WORLD);
     start_time = MPI_Wtime();
     for (int i = 0; i < trial; i++){
