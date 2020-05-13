@@ -12,7 +12,6 @@
 #include <math.h>
 #include <assert.h>
 
-
 using namespace std;
 
 int
@@ -69,7 +68,7 @@ try_once(int width, int height){
   }
 
   MPI_Gather(buf, bufsz, MPI_INT, data, bufsz, MPI_INT, 0, MPI_COMM_WORLD);
-
+  free(buf);
   if (rank == 0){
     gil::rgb8_image_t img(height, width);
     auto img_view = gil::view(img);
@@ -92,14 +91,14 @@ try_once(int width, int height){
       }
 
     }
-
+    free(data);
     // for(int i = 0; i < num_rows * size; i++){
     //   for(int j = 0; j < width; j++){
     //     img_view(j, i) = render(data[j * width + i] / 512.0);
     //   }
     // }
     gil::png_write_view("mandelbrot.png", const_view(img));
-
+    
   }
 
 
@@ -114,7 +113,7 @@ main (int argc, char* argv[])
     start = atoi (argv[1]);
     end = atoi (argv[2]);
     trial = atoi (argv[3]);
-    assert (start > 0 && end > start && trial > 0);
+    assert (start > 0 && end >= start && trial > 0);
   } else {
     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
