@@ -166,7 +166,7 @@ main (int argc, char* argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   if(rank == 0){
-    std::cout<<"Master/slave model - " << size << "processes" <<std::endl;
+    std::cout<<"Master/slave model - " << size << " processes" <<std::endl;
   }  
   MPI_Barrier (MPI_COMM_WORLD);
   double start_time;
