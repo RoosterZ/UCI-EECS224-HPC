@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Benchmark
 #$ -q class
-#$ -pe mpi 64
+#$ -pe mpi 32
 #$ -R y
 
 # Grid Engine Notes:
@@ -27,18 +27,18 @@ mpirun -np 4    ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
-mpirun -np 64   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
+#mpirun -np 64   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 
 mpirun -np 2    ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 4    ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
-mpirun -np 64   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
+#mpirun -np 64   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 
 mpirun -np 2    ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 4    ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
-mpirun -np 64   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
+#mpirun -np 64   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
