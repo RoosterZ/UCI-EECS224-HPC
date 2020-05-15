@@ -155,7 +155,7 @@ main (int argc, char* argv[])
     end = atoi (argv[2]);
     trial = atoi (argv[3]);
     if_render = atoi(argv[4]);
-    assert (start > 0 && end > start && trial > 0);
+    assert (start > 0 && end >= start && trial > 0);
   } else {
     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
