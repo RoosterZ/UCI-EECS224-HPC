@@ -125,7 +125,7 @@ main (int argc, char* argv[])
     MPI_Barrier (MPI_COMM_WORLD);
     start_time = MPI_Wtime();
     for (int i = 0; i < trial; i++){
-      try_once(image_sz, image_sz);
+      try_once(image_sz, image_sz, if_render);
       MPI_Barrier (MPI_COMM_WORLD);
     }
     if(rank == 0){
