@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Susie
 #$ -q class
-#$ -pe mpi 16
+#$ -pe mpi 64
 #$ -R y
 
 # Grid Engine Notes:
@@ -17,4 +17,5 @@ module load boost/1.57.0
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -np 16 -ppn 8  ./mandelbrot_susie 32768 32768 1
+mpirun -np 2 -ppn 1  ./mandelbrot_susie 1024 2048 2
+mpirun -np 4 -ppn 2  ./mandelbrot_susie 1024 2048 2
