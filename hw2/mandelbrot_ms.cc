@@ -33,7 +33,7 @@ mandelbrot(double x, double y) {
 }
 
 void
-try_once(int width, int height){
+try_once(int width, int height, int if_render){
   int rank, size;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -93,22 +93,17 @@ try_once(int width, int height){
         }
       }
     }
-    // for (int i = 0; i < height * width; i++){
-    //     std::cout << data[i] << std::endl;
-    // } 
-
-    gil::rgb8_image_t img(height, width);
-    auto img_view = gil::view(img);
-    for(int i = 0; i < height; i++){
-      for(int j = 0; j < width; j++){
-        img_view(j, i) = render(data[i * width + j] / 512.0);
+    if(if_render){
+      gil::rgb8_image_t img(height, width);
+      auto img_view = gil::view(img);
+      for(int i = 0; i < height; i++){
+        for(int j = 0; j < width; j++){
+          img_view(j, i) = render(data[i * width + j] / 512.0);
+        }
       }
+      gil::png_write_view("mandelbrot.png", const_view(img));
     }
-    gil::png_write_view("mandelbrot.png", const_view(img));
-
     MPI_Waitall(size-1, send_req+1, stat_list+1);
-
-
 
   }
   else{
@@ -154,11 +149,12 @@ try_once(int width, int height){
 int
 main (int argc, char* argv[])
 {
-  int start, end, trial;
-  if (argc == 4) {
+  int start, end, trial, if_render;
+  if (argc == 5) {
     start = atoi (argv[1]);
     end = atoi (argv[2]);
     trial = atoi (argv[3]);
+    if_render = atoi(argv[4]);
     assert (start > 0 && end > start && trial > 0);
   } else {
     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
@@ -170,22 +166,24 @@ main (int argc, char* argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   if(rank == 0){
-    std::cout<<"Master/slave model"<<std::endl;
-  }
+    std::cout<<"Master/slave model - " << size << "processes" <<std::endl;
+  }  
   MPI_Barrier (MPI_COMM_WORLD);
   double start_time;
   for (int image_sz = start; image_sz <= end; image_sz = image_sz * 2){
     MPI_Barrier (MPI_COMM_WORLD);
     start_time = MPI_Wtime();
     for (int i = 0; i < trial; i++){
-      try_once(image_sz, image_sz);
+      try_once(image_sz, image_sz, if_render);
       MPI_Barrier (MPI_COMM_WORLD);
     }
     if(rank == 0){
       std::cout<<image_sz<<" * "<<image_sz<<" | "<<(MPI_Wtime() - start_time) / trial <<" s"<< std::endl;
     }
   }
-
+  if(rank == 0){
+    std::cout << std::endl;
+  }
   MPI_Finalize();
   return 0; 
   
