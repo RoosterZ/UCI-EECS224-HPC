@@ -1,5 +1,5 @@
 #!/bin/bash
-#$ -N Mandelbrot_Susie
+#$ -N Mandelbrot_Benchmark
 #$ -q class
 #$ -pe mpi 64
 #$ -R y
