@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Susie
 #$ -q pub8i
-#$ -pe mpi 64
+#$ -pe mpi 16
 #$ -R y
 
 # Grid Engine Notes:
