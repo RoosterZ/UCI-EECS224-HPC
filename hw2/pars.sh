@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N Mandelbrot_Susie
-#$ -q class
+#$ -q pub8i
 #$ -pe mpi 64
 #$ -R y
 
