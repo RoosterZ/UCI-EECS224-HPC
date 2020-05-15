@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Susie
 #$ -q class
-#$ -pe mpi 32
+#$ -pe mpi 64
 #$ -R y
 
 # Grid Engine Notes:
@@ -16,7 +16,7 @@ module load boost/1.57.0
 # Module load OpenMPI
 module load mpich-3.0.4/gcc-4.8.3
 
-trial=4
+trial=3
 if_render=0
 start_sz=256
 end_sz=16384
@@ -27,3 +27,4 @@ mpirun -np 4    ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
+mpirun -np 64   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
