@@ -63,7 +63,7 @@ try_once(int width, int height, int if_render){
     }
     gil::png_write_view("mandelbrot.png", const_view(img));
   }
-
+  free(data);
 }
 
 int
@@ -81,13 +81,13 @@ main(int argc, char* argv[]) {
     return -1;
   }
   MPI_Init(&argc, &argv);
-  std::cout<<"Serial - " << std::endl;
+  std::cout<<"Serial" << std::endl;
   double start_time;
   start_time = MPI_Wtime();
   for (int image_sz = start; image_sz <= end; image_sz = image_sz * 2){
     start_time = MPI_Wtime();
     for (int i = 0; i < trial; i++){
-      try_once(image_sz, image_sz);
+      try_once(image_sz, image_sz, if_render);
     }
     std::cout<<image_sz<<" * "<<image_sz<<" | "<<(MPI_Wtime() - start_time) / trial <<" s"<< std::endl;
   }
