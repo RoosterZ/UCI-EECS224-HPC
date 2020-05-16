@@ -12,9 +12,6 @@
 
 using namespace std;
 
-#define WIDTH 1000
-#define HEIGHT 1000
-
 int
 mandelbrot(double x, double y) {
   int maxit = 511;
@@ -33,7 +30,7 @@ mandelbrot(double x, double y) {
 }
 
 void
-try_once(int width, int height){
+try_once(int width, int height, int if_render){
   double minX = -2.1;
   double maxX = 0.7;
   double minY = -1.25;
@@ -43,29 +40,41 @@ try_once(int width, int height){
   double jt = (maxX - minX)/width;
   double x, y;
 
-  gil::rgb8_image_t img(height, width);
-  auto img_view = gil::view(img);
+  int* data = (int*) malloc(sizeof(int) * width * height);
+
 
   y = minY;
   for (int i = 0; i < height; ++i) {
     x = minX;
     for (int j = 0; j < width; ++j) {
-      img_view(j, i) = render(mandelbrot(x, y)/512.0);
+      data[i * width + j] = mandelbrot(x, y);
       x += jt;
     }
     y += it;
   }
-  gil::png_write_view("mandelbrot.png", const_view(img));
+
+  if (if_render == 1){
+    gil::rgb8_image_t img(height, width);
+    auto img_view = gil::view(img);
+    for(int i = 0; i < height; i++){
+      for(int j = 0; j < width; j++){
+        img_view(j, i) = render(data[i * width + j] / 512.0);
+      }
+    }
+    gil::png_write_view("mandelbrot.png", const_view(img));
+  }
+
 }
 
 int
 main(int argc, char* argv[]) {
-  int start, end, trial;
-  if (argc == 4) {
+  int start, end, trial, if_render;
+  if (argc == 5) {
     start = atoi (argv[1]);
     end = atoi (argv[2]);
     trial = atoi (argv[3]);
-    assert (start > 0 && end >= start && trial > 0);
+    if_render = atoi (argv[4]);
+    assert (start > 0 && end >= start && trial > 0 && (if_render == 0 or if_render == 1));
   } else {
     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
