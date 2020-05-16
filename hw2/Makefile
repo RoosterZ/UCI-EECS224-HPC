@@ -29,17 +29,17 @@ mandelbrot_ms$(EXEEXT): mandelbrot_ms.cc $(SRCS_COMMON) $(DEPS_COMMON)
 	$(MPICC) $(MPICFLAGS) $(MPICOPTFLAGS) -I/data/apps/boost/1.57/include \
 	    -o $@ mandelbrot_ms.cc $(SRCS_COMMON) $(MPILDFLAGS)
 
-s$(EXEEXT): mandelbrot_susie.cc $(DEPS_COMMON)
-	$(MPICC) $(MPICFLAGS) -O3 -g \
-	    -o $@ mandelbrot_susie.cc  $(MPILDFLAGS)
+# s$(EXEEXT): mandelbrot_susie.cc $(DEPS_COMMON)
+# 	$(MPICC) $(MPICFLAGS) -O3 -g \
+# 	    -o $@ mandelbrot_susie.cc  $(MPILDFLAGS)
 
-j$(EXEEXT): mandelbrot_joe.cc $(DEPS_COMMON)
-	$(MPICC) $(MPICFLAGS) -O3 -g \
-	    -o $@ mandelbrot_joe.cc  $(MPILDFLAGS)
+# j$(EXEEXT): mandelbrot_joe.cc $(DEPS_COMMON)
+# 	$(MPICC) $(MPICFLAGS) -O3 -g \
+# 	    -o $@ mandelbrot_joe.cc  $(MPILDFLAGS)
 
-ms$(EXEEXT): mandelbrot_ms.cc $(DEPS_COMMON)
-	$(MPICC) $(MPICFLAGS) -O3 -g \
-	    -o $@ mandelbrot_ms.cc  $(MPILDFLAGS)
+# ms$(EXEEXT): mandelbrot_ms.cc $(DEPS_COMMON)
+# 	$(MPICC) $(MPICFLAGS) -O3 -g \
+# 	    -o $@ mandelbrot_ms.cc  $(MPILDFLAGS)
 
 clean:
 	rm -f $(TARGETS)
