@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Benchmark
-#$ -q class
-#$ -pe mpi 32
+#$ -q class16
+#$ -pe mpi 48
 #$ -R y
 
 # Grid Engine Notes:
@@ -16,7 +16,7 @@ module load boost/1.57.0
 # Module load OpenMPI
 module load mpich-3.0.4/gcc-4.8.3
 
-trial=4
+trial=3
 if_render=0
 start_sz=256
 end_sz=16384
@@ -27,18 +27,18 @@ mpirun -np 4    ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
-#mpirun -np 64   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
+mpirun -np 48   ./mandelbrot_susie $start_sz $end_sz $trial $if_render
 
 mpirun -np 2    ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 4    ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
-#mpirun -np 64   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
+mpirun -np 48   ./mandelbrot_joe $start_sz $end_sz $trial $if_render
 
 mpirun -np 2    ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 4    ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 8    ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 16   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
 mpirun -np 32   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
-#mpirun -np 64   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
+mpirun -np 48   ./mandelbrot_ms $start_sz $end_sz $trial $if_render
