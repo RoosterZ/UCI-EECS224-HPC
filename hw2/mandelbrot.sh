@@ -16,5 +16,11 @@ module load boost/1.57.0
 # Module load OpenMPI
 module load mpich-3.0.4/gcc-4.8.3
 
+trial=3
+if_render=0
+start_sz=256
+end_sz=16384
+
 # Run the program 
-mpirun -np 1  ./mandelbrot_serial 1000 1000 7
+mpirun -np 1  ./mandelbrot_serial $start_sz $end_sz $trial
+
