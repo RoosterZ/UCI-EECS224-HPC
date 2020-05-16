@@ -22,5 +22,5 @@ start_sz=256
 end_sz=16384
 
 # Run the program 
-mpirun -np 1  ./mandelbrot_serial $start_sz $end_sz $trial
+mpirun -np 1  ./mandelbrot_serial $start_sz $end_sz $trial $if_render
 
