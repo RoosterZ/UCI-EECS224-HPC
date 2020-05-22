@@ -6,7 +6,7 @@ Theoretically, Susie's approach is better and she is the one that is more qualif
 
 A lot of image, including the Mandelbrot set image, is somehow continuous rather than discrete in space. In other word, in some areas of the image, there are a lot of shapes to render while in some other areas, the image is empty. As a result, it is a relatively bad strategy to divide the image into several blocks with continuous row (or column) number because some blocks may contains no content while some others may contains a lot of information. Susie's strategy is much better because a job contains of rows that come from everywhere of the image, from the top to the bottom. 
 
-<img src="/Users/zeyu/Library/Application Support/typora-user-images/image-20200516103233391.png" alt="image-20200516103233391" style="zoom:50%;" />
+<img src="/Users/zeyu/Library/Application Support/typora-user-images/image-20200516103233391.png" alt="image-20200516103233391" style="zoom: 33%;" />
 
 As illustrated in the lecture video, every pixel within the white part in the image requires max (511) iterations while the pixels in the black part require few iterations. in Joe's strategy, the two jobs in the middle are much heavier than the two on the top and bottom. In contrast, in Susie's strategy, all four processes cooperation on both computational-cheap area and computational-heavy area of the image. 
 
