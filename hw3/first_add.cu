@@ -64,11 +64,11 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x + threadIdx.x;
-  
+	unsigned int idx = i * 2;
 	
 	scratch[threadIdx.x] = g_idata[i];
-	if(2*i < n) {
-	  scratch[threadIdx.x] += g_idata[i]; 
+	if(idx < n) {
+	  scratch[threadIdx.x] += g_idata[idx]; 
 	}
 	__syncthreads ();
 	
