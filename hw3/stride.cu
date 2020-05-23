@@ -76,7 +76,7 @@ kernel1(dtype *input, dtype *output, unsigned int n)
     // if((threadIdx.x % (2 * s)) == 0) {
     //   scratch[threadIdx.x] += scratch[threadIdx.x + s];
     // }
-    if(threadIdx.x < blockDim.x / s){
+    if(threadIdx.x < blockDim.x / (s*2)){
       scratch[threadIdx.x] += scratch[threadIdx.x + s];
     }
 
