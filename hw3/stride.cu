@@ -77,7 +77,8 @@ kernel1(dtype *input, dtype *output, unsigned int n)
     //   scratch[threadIdx.x] += scratch[threadIdx.x + s];
     // }
     if(threadIdx.x < blockDim.x / s){
-      scratch[threadIdx.x * s] += scratch[threadIdx.x * s + s / 2];
+      int idx = threadIdx.x * s;
+      scratch[idx] += scratch[idx + s / 2];
     }
 
     __syncthreads ();
