@@ -7,6 +7,10 @@
 
 TARGETS = naive stride sequential first_add unroll multiple
 
+load:
+	module load cuda/8.0
+	module load gcc/4.9.0
+
 all: $(TARGETS)
 
 naive: naive.cu timer.c
