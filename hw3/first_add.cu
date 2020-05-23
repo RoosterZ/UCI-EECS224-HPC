@@ -66,9 +66,9 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	unsigned int i = bid * blockDim.x + threadIdx.x;
   
 	
-	scratch[threadIdx.x] = input[i];
+	scratch[threadIdx.x] = g_idata[i];
 	if(2*i < n) {
-	  scratch[threadIdx.x] += input[i]; 
+	  scratch[threadIdx.x] += g_idata[i]; 
 	}
 	__syncthreads ();
 	
@@ -79,6 +79,10 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	  }
   
 	  __syncthreads ();
+	}
+
+	if(threadIdx.x == 0) {
+		g_odata[bid] = scratch[0];
 	}
 }
 

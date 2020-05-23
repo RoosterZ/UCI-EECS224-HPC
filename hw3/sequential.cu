@@ -80,6 +80,9 @@ kernel2 (dtype *input, dtype *output, unsigned int n)
 
     __syncthreads ();
   }
+  if(threadIdx.x == 0) {
+    output[bid] = scratch[0];
+  }
 }
 
 
