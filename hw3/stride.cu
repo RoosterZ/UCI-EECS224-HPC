@@ -26,18 +26,16 @@ unsigned int nextPow2( unsigned int x ) {
 /* find out # of threads and # thread blocks for a particular kernel */
 void getNumBlocksAndThreads(int whichKernel, int n, int maxBlocks, int maxThreads, int &blocks, int &threads)
 {
-  if (whichKernel < 3)
-    {
-      /* 1 thread per element */
-      threads = (n < maxThreads) ? nextPow2(n) : maxThreads;
-      blocks = (n + threads - 1) / threads;
-    }
-  else
-    {
-      /* 1 thread per 2 elements */
-      threads = (n < maxThreads*2) ? nextPow2((n + 1)/ 2) : maxThreads;
-      blocks = (n + (threads * 2 - 1)) / (threads * 2);
-    }
+  if (whichKernel < 3){
+    /* 1 thread per element */
+    threads = (n < maxThreads) ? nextPow2(n) : maxThreads;
+    blocks = (n + threads - 1) / threads;
+  }
+  else{
+    /* 1 thread per 2 elements */
+    threads = (n < maxThreads*2) ? nextPow2((n + 1)/ 2) : maxThreads;
+    blocks = (n + (threads * 2 - 1)) / (threads * 2);
+  }
   /* limit the total number of threads */
   if (whichKernel == 5)
     blocks = MIN(maxBlocks, blocks);
@@ -62,7 +60,32 @@ dtype reduce_cpu(dtype *data, int n) {
 __global__ void
 kernel1(dtype *input, dtype *output, unsigned int n)
 {
+  __shared__  dtype scratch[MAX_THREADS];
 
+  unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
+  unsigned int i = bid * blockDim.x + threadIdx.x;
+
+  if(i < n) {
+    scratch[threadIdx.x] = input[i]; 
+  } else {
+    scratch[threadIdx.x] = 0;
+  }
+  __syncthreads ();
+
+  for(unsigned int s = 1; s < blockDim.x; s = s << 1) {
+    // if((threadIdx.x % (2 * s)) == 0) {
+    //   scratch[threadIdx.x] += scratch[threadIdx.x + s];
+    // }
+    if(threadIdx.x < blockDim.x / s){
+      scratch[threadIdx.x] += scratch[threadIdx.x + s];
+    }
+
+    __syncthreads ();
+  }
+
+  if(threadIdx.x == 0) {
+    output[bid] = scratch[0];
+  }
 }
 
 int 
