@@ -64,6 +64,7 @@ kernel1(dtype *input, dtype *output, unsigned int n)
 
   unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
   unsigned int i = bid * blockDim.x + threadIdx.x;
+  int idx = threadIdx.x * 2;
 
   if(i < n) {
     scratch[threadIdx.x] = input[i]; 
@@ -76,13 +77,13 @@ kernel1(dtype *input, dtype *output, unsigned int n)
     // if((threadIdx.x % (2 * s)) == 0) {
     //   scratch[threadIdx.x] += scratch[threadIdx.x + s];
     // }
-    
-    if(threadIdx.x < blockDim.x / (2*s)){
+    if(idx < blockDim.x){
     //  int idx = threadIdx.x * s;
-      scratch[threadIdx.x * s * 2] += scratch[threadIdx.x * s * 2 + s];
+      scratch[idx] += scratch[idx + s];
     }
-
+    idx *= 2;
     __syncthreads ();
+    
   }
 
   if(threadIdx.x == 0) {
