@@ -64,7 +64,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x + threadIdx.x;
-	unsigned int idx = i * 2;
+	unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
 	
 	scratch[threadIdx.x] = g_idata[i];
 	if(idx < n) {
