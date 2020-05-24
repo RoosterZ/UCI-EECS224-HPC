@@ -64,23 +64,29 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	__shared__  dtype scratch2[MAX_THREADS];
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x + threadIdx.x;
-	unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
+	//unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
 	//printf(" %d ", idx - i);
 	
-	if(i < n){
-		scratch[threadIdx.x] = g_idata[i];
-	} else{
+	// if(i < n){
+	// 	scratch[threadIdx.x] = g_idata[i];
+	// } else{
+	// 	scratch[threadIdx.x] = 0.0;
+	// }
+
+	// if(idx < n) {
+	//   //printf(" | ");
+	//   scratch2[threadIdx.x] = g_idata[idx]; 
+	//   scratch[threadIdx.x] += scratch2[threadIdx.x];
+	// }
+	if(i < (n>>1)) {
+		scratch[threadIdx.x] = g_idata[i] + g_idata[i+(n>>1)];
+	  } else {
 		scratch[threadIdx.x] = 0.0;
 	}
 
-	if(idx < n) {
-	  //printf(" | ");
-	  scratch2[threadIdx.x] = g_idata[idx]; 
-	  scratch[threadIdx.x] += scratch2[threadIdx.x];
-	}
 	__syncthreads ();
 	
-	for(unsigned int s = blockDim.x / 2; s > 0; s = s >> 1) {
+	for(unsigned int s = blockDim.x >> 1 ; s > 0; s = s >> 1) {
   
 	  if(threadIdx.x < s){
 		scratch[threadIdx.x] += scratch[threadIdx.x + s];
