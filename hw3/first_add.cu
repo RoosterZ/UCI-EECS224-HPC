@@ -69,12 +69,20 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 		printf(" %d ", idx - i);
 	}
 	
-	
-	if(i < n/2 ){
-		scratch[threadIdx.x] = g_idata[i] + g_idata[idx];
+	// idx < n
+	if(i < n){
+		scratch[threadIdx.x] = g_idata[i];
 	} else{
 		scratch[threadIdx.x] = 0.0;
 	}
+
+	if(idx < n){
+		scratch[threadIdx.x] += g_idata[i];
+	}
+	
+	// else{
+	// 	scratch[threadIdx.x] = 0.0;
+	// }
 	//__syncthreads ();
 	// if(idx < n) {
 	//   //printf(" | ");
