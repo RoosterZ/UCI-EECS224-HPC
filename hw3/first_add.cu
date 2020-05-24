@@ -67,17 +67,17 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
 	//printf(" %d ", idx - i);
 	
-	if(i < n ){
-		scratch[threadIdx.x] = g_idata[i];
+	if(idx < n ){
+		scratch[threadIdx.x] = g_idata[i] + g_idata[idx];
 	} else{
 		scratch[threadIdx.x] = 0.0;
 	}
-	__syncthreads ();
-	if(idx < n) {
-	  //printf(" | ");
-	  //scratch2[threadIdx.x] = g_idata[idx]; 
-	  scratch[threadIdx.x] += g_idata[idx];
-	}
+	//__syncthreads ();
+	// if(idx < n) {
+	//   //printf(" | ");
+	//   //scratch2[threadIdx.x] = g_idata[idx]; 
+	//   scratch[threadIdx.x] += g_idata[idx];
+	// }
 	// if(i < (n>>1)) {
 	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i+(n>>1)];
 	//   } else {
