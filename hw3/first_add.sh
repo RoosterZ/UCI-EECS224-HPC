@@ -25,7 +25,7 @@ echo "Current directory: ${PWD}"
 
 echo ""
 echo "=== Running 5 trials of first_add ... ==="
-for trial in 1 2 3 4 5; do
+for trial in 1 2; do
   echo "*** Trial ${trial} ***"
   ./first_add
 done
