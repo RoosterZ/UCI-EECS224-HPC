@@ -109,6 +109,9 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
+		if (idx - i < 1000){
+			printf("\n%.3f\n", scratch[0]);
+		}
 	}
 }
 
