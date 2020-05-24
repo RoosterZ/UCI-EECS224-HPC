@@ -77,7 +77,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	}
 
 	if(idx < n){
-		scratch[threadIdx.x] += g_idata[i];
+		scratch[threadIdx.x] += g_idata[idx];
 	}
 	
 	// else{
