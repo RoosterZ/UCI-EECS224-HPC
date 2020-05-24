@@ -64,7 +64,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	//__shared__  dtype scratch2[MAX_THREADS];
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
-	unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
+	unsigned int idx = i + blockDim.x;
 	// if (i == 0){
 	// 	printf(" %d ", idx - i);
 	// }
@@ -76,7 +76,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	//__syncthreads ();	
 
 	if(idx < n){
-		scratch[threadIdx.x] += g_idata[i + blockDim.x];
+		scratch[threadIdx.x] += g_idata[idx];
 	}
 	
 	// else{
