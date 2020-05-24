@@ -63,33 +63,27 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	__shared__  dtype scratch[MAX_THREADS];
 	//__shared__  dtype scratch2[MAX_THREADS];
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
-	unsigned int i = bid * blockDim.x + threadIdx.x;
+	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
 	unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
 	// if (i == 0){
 	// 	printf(" %d ", idx - i);
 	// }
-	
-	// idx < n
 	if(i < n){
 		scratch[threadIdx.x] = g_idata[i];
-	} else{
+	} else {
 		scratch[threadIdx.x] = 0.0;
 	}
 	//__syncthreads ();	
 
 	if(idx < n){
-		scratch[threadIdx.x] += g_idata[idx];
+		scratch[threadIdx.x] += g_idata[i + blockDim.x];
 	}
 	
 	// else{
 	// 	scratch[threadIdx.x] = 0.0;
 	// }
 	//__syncthreads ();
-	// if(idx < n) {
-	//   //printf(" | ");
-	//   //scratch2[threadIdx.x] = g_idata[idx]; 
-	//   scratch[threadIdx.x] += g_idata[idx];
-	// }
+
 	// if(i < (n>>1)) {
 	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i+(n>>1)];
 	//   } else {
@@ -109,9 +103,9 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
-		if (idx - i < 1000){
-			printf("\nbid:%u val:%.5f\n", bid, scratch[0]);
-		}
+		// if (idx - i < 1000){
+		// 	printf("\nbid:%u val:%.5f\n", bid, scratch[0]);
+		// }
 	}
 }
 
