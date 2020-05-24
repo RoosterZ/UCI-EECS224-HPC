@@ -75,7 +75,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	} else{
 		scratch[threadIdx.x] = 0.0;
 	}
-	__syncthreads ();	
+	//__syncthreads ();	
 
 	if(idx < n){
 		scratch[threadIdx.x] += g_idata[idx];
