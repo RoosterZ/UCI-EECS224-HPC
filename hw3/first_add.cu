@@ -66,7 +66,12 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	unsigned int i = bid * blockDim.x + threadIdx.x;
 	unsigned int idx = gridDim.x * gridDim.y * blockDim.x + i;
 	
-	scratch[threadIdx.x] = g_idata[i];
+	if(i < n){
+		scratch[threadIdx.x] = g_idata[i];
+	} else{
+		scratch[threadIdx.x] = 0.0;
+	}
+
 	if(idx < n) {
 	  //printf(" | ");
 	  scratch[threadIdx.x] += g_idata[idx]; 
