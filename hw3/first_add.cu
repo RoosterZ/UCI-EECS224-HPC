@@ -172,6 +172,7 @@ main(int argc, char** argv)
 		blocks = 0;
 		getNumBlocksAndThreads (whichKernel, s, MAX_BLOCKS, MAX_THREADS, 
 														blocks, threads);
+		printf("\nthread=%d, block=%d \n", threads, blocks);
 
 		dim3 gb(16, (blocks + 16 - 1) / 16, 1);
 		dim3 tb(threads, 1, 1);
