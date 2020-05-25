@@ -94,10 +94,10 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 		scratch[threadIdx.x] = 0.0;
 	}
 
-	while (k < 64){
-		scratch[k + threadIdx.x] = 0.0;
-		k += blockDim.x;
-	}
+	// while (k < 64){
+	// 	scratch[k + threadIdx.x] = 0.0;
+	// 	k += blockDim.x;
+	// }
 	__syncthreads ();
 
 	
@@ -151,18 +151,12 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
 		// }
 
-		//if(blockDim.x >= 64)	
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-		//if(blockDim.x >= 32)	
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-		//if(blockDim.x >= 16)	
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-		//if(blockDim.x >= 8)		
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		//if(blockDim.x >= 4)		
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		//if(blockDim.x >= 2)		
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+		if(blockDim.x >= 64)	wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+		if(blockDim.x >= 32)	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+		if(blockDim.x >= 16)	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+		if(blockDim.x >= 8)		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+		if(blockDim.x >= 4)		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		if(blockDim.x >= 2)		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
 
 	}
 
