@@ -93,7 +93,8 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 		__syncthreads ();
 	}
 	if (threadIdx.x < 32){
-		warpReduce(scratch, threadIdx.x);
+		volatile dtype *wScratch = scratch;
+		warpReduce(wScratch, threadIdx.x);
 	}
 	
 
