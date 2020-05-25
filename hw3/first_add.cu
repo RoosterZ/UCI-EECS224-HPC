@@ -64,7 +64,6 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
-	//unsigned int idx = i + blockDim.x;
 
 	if(i < n){
 		scratch[threadIdx.x] = g_idata[i];
@@ -74,10 +73,6 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	} else {
 		scratch[threadIdx.x] = 0.0;
 	}
-
-
-
-
 
 	__syncthreads ();
 	
@@ -92,9 +87,6 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
-		// if (idx - i < 1000){
-		// 	printf("\nbid:%u val:%.5f\n", bid, scratch[0]);
-		// }
 	}
 }
 
@@ -167,7 +159,7 @@ main(int argc, char** argv)
 		blocks = 0;
 		getNumBlocksAndThreads (whichKernel, s, MAX_BLOCKS, MAX_THREADS, 
 														blocks, threads);
-		//printf("\nthread=%u, block=%u \n", threads, blocks);
+
 
 		dim3 gb(16, (blocks + 16 - 1) / 16, 1);
 		dim3 tb(threads, 1, 1);
