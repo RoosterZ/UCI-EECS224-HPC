@@ -71,17 +71,16 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	//__syncthreads ();
 	if (i < n){
 		scratch[threadIdx.x] = g_idata[i];
-		i += numThread;
-		while (i < n){
-		scratch[threadIdx.x] += g_idata[i];
-		i += numThread;
-		//__syncthreads ();
-		}
 	}
 	else{
 		scratch[threadIdx.x] = 0.0;
 	}
-
+	i += numThread;
+	while (i < n){
+		scratch[threadIdx.x] += g_idata[i];
+		i += numThread;
+		//__syncthreads ();
+	}
 
 	// if(i < n){
 	// 	scratch[threadIdx.x] = g_idata[i];
