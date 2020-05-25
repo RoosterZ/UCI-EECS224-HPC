@@ -58,7 +58,7 @@ dtype reduce_cpu(dtype *data, int n) {
     return sum;
 }
 
-__device__ void warpReduce(volatile dtype *wScratch, int tid){
+__device__ void warpReduce(volatile dtype *wScratch, int tid, int bsize){
 
 		// if(bSize >= 64)	wScratch[tid] += wScratch[tid + 32];
 		// if(bSize >= 32)	wScratch[tid] += wScratch[tid + 16];
@@ -67,8 +67,8 @@ __device__ void warpReduce(volatile dtype *wScratch, int tid){
 		// if(bSize >= 4)	wScratch[tid] += wScratch[tid + 2];
 		// if(bSize >= 2)	wScratch[tid] += wScratch[tid + 1];
 
-		wScratch[tid] += wScratch[tid + 32];
-		wScratch[tid] += wScratch[tid + 16];
+		if(bsize >= 64) wScratch[tid] += wScratch[tid + 32];
+		if(bsize >= 32) wScratch[tid] += wScratch[tid + 16];
 		wScratch[tid] += wScratch[tid + 8];
 		wScratch[tid] += wScratch[tid + 4];
 		wScratch[tid] += wScratch[tid + 2];
@@ -111,7 +111,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	}
 
 	if(threadIdx.x < 32){
-		warpReduce(scratch, threadIdx.x);
+		warpReduce(scratch, threadIdx.x, blockDim.x);
 	}
 
 
