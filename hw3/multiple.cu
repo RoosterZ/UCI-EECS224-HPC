@@ -68,9 +68,11 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	__shared__ volatile dtype scratch[MAX_THREADS];
 	volatile dtype *wScratch = scratch;
 	scratch[threadIdx.x] = 0.0;
+	__syncthreads ();
 	while (i < n){
 		scratch[threadIdx.x] += g_idata[i];
 		i += numThread;
+		__syncthreads ();
 	}
 
 	// if(i < n){
@@ -80,6 +82,8 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// 	}
 	// } else {
 	// 	scratch[threadIdx.x] = 0.0;
+
+
 	// }
 
 	if (blockDim.x >= 64){
@@ -192,7 +196,7 @@ main(int argc, char** argv)
 	/* GPU kernel */
 	dim3 gb(blocks, 1, 1);
 	dim3 tb(threads, 1, 1);
-
+	printf("threads:%d blocks:%d", threads, blocks);
 	/* warm up */	
 	kernel5 <<<gb, tb>>> (d_idata, d_odata, N);
 	cudaThreadSynchronize ();
