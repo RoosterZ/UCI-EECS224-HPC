@@ -211,7 +211,7 @@ main(int argc, char** argv)
 		blocks = 0;
 		getNumBlocksAndThreads (whichKernel, s, MAX_BLOCKS, MAX_THREADS, 
 														blocks, threads);
-
+		printf("threads:%d blocks:%d", threads, blocks);
 		dim3 gb(blocks, 1, 1);
 		dim3 tb(threads, 1, 1);
 
