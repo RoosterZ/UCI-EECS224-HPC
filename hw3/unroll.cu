@@ -84,7 +84,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
-	int k = blockDim.x;
+	//int k = blockDim.x;
 	if(i < n){
 		scratch[threadIdx.x] = g_idata[i];
 		if(i + blockDim.x < n){
