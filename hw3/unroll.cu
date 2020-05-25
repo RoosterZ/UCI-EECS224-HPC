@@ -96,12 +96,13 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	//warpReduce(scratch, threadIdx.x);
 
 	if(threadIdx.x < 32){
-		scratch[threadIdx.x] += scratch[threadIdx.x + 32];
-		scratch[threadIdx.x] += scratch[threadIdx.x + 16];
-		scratch[threadIdx.x] += scratch[threadIdx.x + 8];
-		scratch[threadIdx.x] += scratch[threadIdx.x + 4];
-		scratch[threadIdx.x] += scratsh[threadIdx.x + 2];
-		scratch[threadIdx.x] += scratch[threadIdx.x + 1];
+		volatile dtype *wScratch = scratch;
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
 	}
 
 	if(threadIdx.x == 0) {
