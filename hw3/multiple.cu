@@ -67,7 +67,7 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	//int k = blockDim.x;
 	__shared__ dtype scratch[MAX_THREADS];
 	volatile dtype *wScratch = scratch;
-	scratch[threadIdx] = 0.0;
+	scratch[threadIdx.x] = 0.0;
 	while (i < n){
 		scratch[threadIdx.x] += g_idata[i];
 		i += numThread;
