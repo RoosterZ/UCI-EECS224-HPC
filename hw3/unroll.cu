@@ -78,9 +78,9 @@ __device__ void warpReduce(volatile dtype *wScratch, int tid, int bsize){
 }
 
 __global__ void
-kernel4(T *in, T *out, unsigned int n)
+kernel4(dtype *in, dtype *out, unsigned int n)
 {
-    __shared__ volatile T d[MAX_THREADS];
+    __shared__ volatile dtype d[MAX_THREADS];
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;
 
