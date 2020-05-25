@@ -68,11 +68,11 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	__shared__ volatile dtype scratch[MAX_THREADS];
 	volatile dtype *wScratch = scratch;
 	scratch[threadIdx.x] = 0.0;
-	__syncthreads ();
+	//__syncthreads ();
 	while (i < n){
 		scratch[threadIdx.x] += g_idata[i];
 		i += numThread;
-		__syncthreads ();
+		//__syncthreads ();
 	}
 
 	// if(i < n){
