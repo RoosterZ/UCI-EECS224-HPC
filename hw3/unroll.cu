@@ -80,21 +80,23 @@ __device__ void warpReduce(volatile dtype *wScratch, int tid, int bsize){
 __global__ void
 kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
-	__shared__ dtype scratch[MAX_THREADS];
+	
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
 	//int k = blockDim.x;
-	if(i < n){
-		scratch[threadIdx.x] = g_idata[i];
-		if(i + blockDim.x < n){
-			scratch[threadIdx.x] += g_idata[i + blockDim.x];
-		}
-	} else {
-		scratch[threadIdx.x] = 0.0;
-	}
+
 
 	if (blockDim.x >= 64){
+		__shared__ dtype scratch[MAX_THREADS];
+		if(i < n){
+			scratch[threadIdx.x] = g_idata[i];
+			if(i + blockDim.x < n){
+				scratch[threadIdx.x] += g_idata[i + blockDim.x];
+			}
+		} else {
+			scratch[threadIdx.x] = 0.0;
+		}
 		__syncthreads ();
 		for(unsigned int s = blockDim.x >> 1 ; s > 32; s = s >> 1) {
 	
@@ -113,10 +115,22 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
 			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
 		}
+		if(threadIdx.x == 0) {
+			g_odata[bid] = scratch[0];
+		}
 
 	} 
 	else {
-		volatile dtype *wScratch = scratch;
+		__shared__ volatile dtype wScratch[MAX_THREADS];
+		if(i < n){
+			wScratch[threadIdx.x] = g_idata[i];
+			if(i + blockDim.x < n){
+				wScratch[threadIdx.x] += g_idata[i + blockDim.x];
+			}
+		} else {
+			wScratch[threadIdx.x] = 0.0;
+		}
+		//volatile dtype *wScratch = scratch;
 		if (blockDim.x >= 32){
 			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
 			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
@@ -142,12 +156,14 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 		else {
 			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
 		}
-	}
-	if(threadIdx.x == 0) {
-		g_odata[bid] = scratch[0];
+		if(threadIdx.x == 0) {
+			g_odata[bid] = wScratch[0];
+		}
+	
+	
 	}
 
-	
+
 }
 
 
