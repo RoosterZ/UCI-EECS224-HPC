@@ -58,24 +58,24 @@ dtype reduce_cpu(dtype *data, int n) {
     return sum;
 }
 
-// __device__ void warpReduce(volatile dtype *wScratch, int tid){
+__device__ void warpReduce(volatile dtype *wScratch, int tid){
 
-// 		if(bSize >= 64)	wScratch[tid] += wScratch[tid + 32];
-// 		if(bSize >= 32)	wScratch[tid] += wScratch[tid + 16];
-// 		if(bSize >= 16)	wScratch[tid] += wScratch[tid + 8];
-// 		if(bSize >= 8)	wScratch[tid] += wScratch[tid + 4];
-// 		if(bSize >= 4)	wScratch[tid] += wScratch[tid + 2];
-// 		if(bSize >= 2)	wScratch[tid] += wScratch[tid + 1];
+		// if(bSize >= 64)	wScratch[tid] += wScratch[tid + 32];
+		// if(bSize >= 32)	wScratch[tid] += wScratch[tid + 16];
+		// if(bSize >= 16)	wScratch[tid] += wScratch[tid + 8];
+		// if(bSize >= 8)	wScratch[tid] += wScratch[tid + 4];
+		// if(bSize >= 4)	wScratch[tid] += wScratch[tid + 2];
+		// if(bSize >= 2)	wScratch[tid] += wScratch[tid + 1];
 
-// 		// wScratch[tid] += wScratch[tid + 32];
-// 		// wScratch[tid] += wScratch[tid + 16];
-// 		// wScratch[tid] += wScratch[tid + 8];
-// 		// wScratch[tid] += wScratch[tid + 4];
-// 		// wScratch[tid] += wScratch[tid + 2];
-// 		// wScratch[tid] += wScratch[tid + 1];	
+		wScratch[tid] += wScratch[tid + 32];
+		wScratch[tid] += wScratch[tid + 16];
+		wScratch[tid] += wScratch[tid + 8];
+		wScratch[tid] += wScratch[tid + 4];
+		wScratch[tid] += wScratch[tid + 2];
+		wScratch[tid] += wScratch[tid + 1];	
 	
 
-// }
+}
 
 __global__ void
 kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
@@ -110,61 +110,61 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 		__syncthreads ();
 	}
 
-	// if(threadIdx.x < 32){
-	// 	warpReduce(scratch, threadIdx.x);
-	// }
-
-
 	if(threadIdx.x < 32){
-		volatile dtype *wScratch = scratch;
-		// if (blockDim.x >= 64){
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
-		// }
-		// else if (blockDim.x >= 32){
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		// }
-		// else if (blockDim.x >= 16){
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		// }
-		// else if (blockDim.x >= 8){
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		// }
-		// else if (blockDim.x >= 4){
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		// }
-		// else {
-		// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		// }
-
-		//if(blockDim.x >= 64)	
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-		//if(blockDim.x >= 32)	
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-		//if(blockDim.x >= 16)	
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-		//if(blockDim.x >= 8)		
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		//if(blockDim.x >= 4)		
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		//if(blockDim.x >= 2)		
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
-
+		warpReduce(scratch, threadIdx.x);
 	}
+
+
+	// if(threadIdx.x < 32){
+	// 	volatile dtype *wScratch = scratch;
+	// 	// if (blockDim.x >= 64){
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+	// 	// }
+	// 	// else if (blockDim.x >= 32){
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	// }
+	// 	// else if (blockDim.x >= 16){
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	// }
+	// 	// else if (blockDim.x >= 8){
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	// }
+	// 	// else if (blockDim.x >= 4){
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	// }
+	// 	// else {
+	// 	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	// }
+
+	// 	//if(blockDim.x >= 64)	
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+	// 	//if(blockDim.x >= 32)	
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+	// 	//if(blockDim.x >= 16)	
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 	//if(blockDim.x >= 8)		
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 	//if(blockDim.x >= 4)		
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	//if(blockDim.x >= 2)		
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+
+	// }
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
