@@ -11,6 +11,7 @@ typedef float dtype;
 #define MAX_BLOCKS 64
 
 #define MIN(x,y) ((x < y) ? x : y)
+//#define MAX(x,y) ((x > y) ? x : y)
 
 /* return the next power of 2 number that is larger than x */
 unsigned int nextPow2( unsigned int x ) {
@@ -83,6 +84,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
+	int k = blockDim.x;
 	if(i < n){
 		scratch[threadIdx.x] = g_idata[i];
 		if(i + blockDim.x < n){
@@ -90,6 +92,11 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 		}
 	} else {
 		scratch[threadIdx.x] = 0.0;
+	}
+
+	while (k < 64){
+		scratch[k + threadIdx.x] = 0.0;
+		k += blockDim.x;
 	}
 	__syncthreads ();
 
@@ -102,49 +109,50 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 		__syncthreads ();
 	}
-	// //if (threadIdx.x < 32){
-	// //	volatile dtype *wScratch = scratch;
-	// warpReduce(scratch, threadIdx.x, blockDim.x);
-	// //}
+	//if (threadIdx.x < 32){
+	//	volatile dtype *wScratch = scratch;
+	
+		warpReduce(scratch, threadIdx.x, blockDim.x);
+	//}
 	
 
-	if(threadIdx.x < 32){
-		volatile dtype *wScratch = scratch;
-		if (blockDim.x >= 64){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
-		}
-		else if (blockDim.x >= 32){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		}
-		else if (blockDim.x >= 16){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		}
-		else if (blockDim.x >= 8){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		}
-		else if (blockDim.x >= 4){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		}
-		else {
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
-		}
+	// if(threadIdx.x < 32){
+	// 	volatile dtype *wScratch = scratch;
+	// 	if (blockDim.x >= 64){
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+	// 	}
+	// 	else if (blockDim.x >= 32){
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	}
+	// 	else if (blockDim.x >= 16){
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	}
+	// 	else if (blockDim.x >= 8){
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	}
+	// 	else if (blockDim.x >= 4){
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	}
+	// 	else {
+	// 		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	// 	}
 
-	}
+	// }
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
