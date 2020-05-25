@@ -65,7 +65,7 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	unsigned int i = bid * blockDim.x + threadIdx.x;
 	unsigned int numThread = blockDim.x * gridDim.x;
 	//int k = blockDim.x;
-	__shared__ volatile dtype scratch[MAX_THREADS];
+	__shared__ dtype scratch[MAX_THREADS];
 	volatile dtype *wScratch = scratch;
 	scratch[threadIdx.x] = 0.0;
 	//__syncthreads ();
