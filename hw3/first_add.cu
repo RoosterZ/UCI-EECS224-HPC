@@ -61,34 +61,23 @@ __global__ void
 kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
 	__shared__  dtype scratch[MAX_THREADS];
-	//__shared__  dtype scratch2[MAX_THREADS];
+
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
-	unsigned int idx = i + blockDim.x;
-	// if (i == 0){
-	// 	printf(" %d ", idx - i);
-	// }
+	//unsigned int idx = i + blockDim.x;
+
 	if(i < n){
 		scratch[threadIdx.x] = g_idata[i];
+		if(i + blockDim.x < n){
+			scratch[threadIdx.x] += g_idata[i + blockDim.x];
+		}
 	} else {
 		scratch[threadIdx.x] = 0.0;
 	}
-	//__syncthreads ();	
 
-	if(idx < n){
-		scratch[threadIdx.x] += g_idata[idx];
-	}
-	
-	// else{
-	// 	scratch[threadIdx.x] = 0.0;
-	// }
-	//__syncthreads ();
 
-	// if(i < (n>>1)) {
-	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i+(n>>1)];
-	//   } else {
-	// 	scratch[threadIdx.x] = 0.0;
-	// }
+
+
 
 	__syncthreads ();
 	
@@ -178,7 +167,7 @@ main(int argc, char** argv)
 		blocks = 0;
 		getNumBlocksAndThreads (whichKernel, s, MAX_BLOCKS, MAX_THREADS, 
 														blocks, threads);
-		printf("\nthread=%u, block=%u \n", threads, blocks);
+		//printf("\nthread=%u, block=%u \n", threads, blocks);
 
 		dim3 gb(16, (blocks + 16 - 1) / 16, 1);
 		dim3 tb(threads, 1, 1);
