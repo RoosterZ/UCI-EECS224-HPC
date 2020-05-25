@@ -85,14 +85,16 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	//int k = blockDim.x;
 	__shared__ dtype scratch[MAX_THREADS];
 	volatile dtype *wScratch = scratch;
+	scratch[threadIdx.x] = 0.0;
 	if(i < n){
-		scratch[threadIdx.x] = g_idata[i];
+		scratch[threadIdx.x] += g_idata[i];
 		if(i + blockDim.x < n){
 			scratch[threadIdx.x] += g_idata[i + blockDim.x];
 		}
-	} else {
-		scratch[threadIdx.x] = 0.0;
-	}
+	} 
+	// else {
+	// 	scratch[threadIdx.x] = 0.0;
+	// }
 
 	if (blockDim.x >= 64){
 		__syncthreads ();
