@@ -100,7 +100,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// 	scratch[threadIdx.x] += scratch[threadIdx.x + 16];
 	// 	scratch[threadIdx.x] += scratch[threadIdx.x + 8];
 	// 	scratch[threadIdx.x] += scratch[threadIdx.x + 4];
-	// 	scratch[threadIdx.x] += scratch[threadIdx.x + 2];
+	// 	scratch[threadIdx.x] += scratcsh[threadIdx.x + 2];
 	// 	scratch[threadIdx.x] += scratch[threadIdx.x + 1];
 	// }
 
@@ -209,7 +209,8 @@ main(int argc, char** argv)
 	/* ================================================== */
 
 	if(abs (h_odata - h_cpu) > 1e-5) {
-    fprintf(stderr, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
+	fprintf(stderr, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
+	fprintf(stdout, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
 	} else {
     printf("SUCCESS: GPU: %f  CPU: %f\n", h_odata, h_cpu);
 	}

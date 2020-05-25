@@ -192,7 +192,7 @@ main(int argc, char** argv)
 
 	if(abs (h_odata - h_cpu) > 1e-5) {
     	fprintf(stderr, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
-		fprintf(stdout, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
+		//:qfprintf(stdout, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
 
 	} 
 	else {
