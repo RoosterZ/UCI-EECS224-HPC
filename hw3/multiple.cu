@@ -61,6 +61,81 @@ __global__ void
 kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
 
+	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
+	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
+	unsigned int numThread = blockDim.x * gridDim.x;
+	//int k = blockDim.x;
+	__shared__ dtype scratch[MAX_THREADS];
+	volatile dtype *wScratch = scratch;
+	scratch[threadIdx] = 0.0;
+	while (i < n){
+		scratch[threadIdx.x] += g_idata[i];
+		i += numThread;
+	}
+
+	// if(i < n){
+	// 	scratch[threadIdx.x] = g_idata[i];
+	// 	if(i + blockDim.x < n){
+	// 		scratch[threadIdx.x] += g_idata[i + blockDim.x];
+	// 	}
+	// } else {
+	// 	scratch[threadIdx.x] = 0.0;
+	// }
+
+	if (blockDim.x >= 64){
+		__syncthreads ();
+		for(unsigned int s = blockDim.x >> 1 ; s > 32; s = s >> 1) {
+	
+			if(threadIdx.x < s){
+				scratch[threadIdx.x] += scratch[threadIdx.x + s];
+			}
+			__syncthreads ();
+		}
+		
+		if(threadIdx.x < 32){
+			wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+		}
+
+
+	} 
+
+	else if (blockDim.x >= 32){
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	}
+	else if (blockDim.x >= 16){
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	}
+	else if (blockDim.x >= 8){
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	}
+	else if (blockDim.x >= 4){
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	}
+	else {
+		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+	}
+	
+	
+	if(threadIdx.x == 0) {
+		g_odata[bid] = scratch[0];
+	}
+	
+	
 }
 
 int 

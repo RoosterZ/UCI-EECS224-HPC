@@ -101,7 +101,6 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 			if(threadIdx.x < s){
 				scratch[threadIdx.x] += scratch[threadIdx.x + s];
 			}
-	
 			__syncthreads ();
 		}
 		
