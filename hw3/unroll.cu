@@ -59,12 +59,19 @@ dtype reduce_cpu(dtype *data, int n) {
 
 __device__ void warpReduce(volatile dtype *wScratch, int tid, int bSize){
 	if(tid < 32){
-		if(bSize >= 64)	wScratch[tid] += wScratch[tid + 32];
-		if(bSize >= 32)	wScratch[tid] += wScratch[tid + 16];
-		if(bSize >= 16)	wScratch[tid] += wScratch[tid + 8];
-		if(bSize >= 8)	wScratch[tid] += wScratch[tid + 4];
-		if(bSize >= 4)	wScratch[tid] += wScratch[tid + 2];
-		if(bSize >= 2)	wScratch[tid] += wScratch[tid + 1];		
+		// if(bSize >= 64)	wScratch[tid] += wScratch[tid + 32];
+		// if(bSize >= 32)	wScratch[tid] += wScratch[tid + 16];
+		// if(bSize >= 16)	wScratch[tid] += wScratch[tid + 8];
+		// if(bSize >= 8)	wScratch[tid] += wScratch[tid + 4];
+		// if(bSize >= 4)	wScratch[tid] += wScratch[tid + 2];
+		// if(bSize >= 2)	wScratch[tid] += wScratch[tid + 1];
+
+		wScratch[tid] += wScratch[tid + 32];
+		wScratch[tid] += wScratch[tid + 16];
+		wScratch[tid] += wScratch[tid + 8];
+		wScratch[tid] += wScratch[tid + 4];
+		wScratch[tid] += wScratch[tid + 2];
+		wScratch[tid] += wScratch[tid + 1];	
 	}
 
 }
