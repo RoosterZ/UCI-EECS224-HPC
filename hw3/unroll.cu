@@ -57,7 +57,7 @@ dtype reduce_cpu(dtype *data, int n) {
     return sum;
 }
 
-__device void warpReduce(volatile* dtype wSratch, int tid){
+__device__ void warpReduce(volatile* dtype wSratch, int tid){
 	wScratch[tid] += wScratch[tid + 32];
 	wScratch[tid] += wScratch[tid + 16];
 	wScratch[tid] += wScratch[tid + 8];
