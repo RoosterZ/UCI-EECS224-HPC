@@ -58,21 +58,21 @@ dtype reduce_cpu(dtype *data, int n) {
     return sum;
 }
 
-__device__ void warpReduce(volatile dtype *wScratch, int tid, int bsize){
+__device__ void warpReduce(volatile dtype *scratch, int tid, int bsize){
 
-		// if(bSize >= 64)	wScratch[tid] += wScratch[tid + 32];
-		// if(bSize >= 32)	wScratch[tid] += wScratch[tid + 16];
-		// if(bSize >= 16)	wScratch[tid] += wScratch[tid + 8];
-		// if(bSize >= 8)	wScratch[tid] += wScratch[tid + 4];
-		// if(bSize >= 4)	wScratch[tid] += wScratch[tid + 2];
-		// if(bSize >= 2)	wScratch[tid] += wScratch[tid + 1];
+		// if(bSize >= 64)	scratch[tid] += scratch[tid + 32];
+		// if(bSize >= 32)	scratch[tid] += scratch[tid + 16];
+		// if(bSize >= 16)	scratch[tid] += scratch[tid + 8];
+		// if(bSize >= 8)	scratch[tid] += scratch[tid + 4];
+		// if(bSize >= 4)	scratch[tid] += scratch[tid + 2];
+		// if(bSize >= 2)	scratch[tid] += scratch[tid + 1];
 
-		if(bsize >= 64) wScratch[tid] += wScratch[tid + 32];
-		if(bsize >= 32) wScratch[tid] += wScratch[tid + 16];
-		wScratch[tid] += wScratch[tid + 8];
-		wScratch[tid] += wScratch[tid + 4];
-		wScratch[tid] += wScratch[tid + 2];
-		wScratch[tid] += wScratch[tid + 1];	
+		if(bsize >= 64) scratch[tid] += scratch[tid + 32];
+		if(bsize >= 32) scratch[tid] += scratch[tid + 16];
+		scratch[tid] += scratch[tid + 8];
+		scratch[tid] += scratch[tid + 4];
+		scratch[tid] += scratch[tid + 2];
+		scratch[tid] += scratch[tid + 1];	
 	
 
 }
@@ -111,7 +111,7 @@ __device__ void warpReduce(volatile dtype *wScratch, int tid, int bsize){
 __global__ void
 kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
-	__shared__ dtype scratch[MAX_THREADS];
+	__shared__ volatile dtype scratch[MAX_THREADS];
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
 	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;
@@ -145,53 +145,53 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// 	warpReduce(scratch, threadIdx.x, blockDim.x);
 	// }
 
-	volatile dtype *wScratch = scratch;
+	//volatile dtype *scratch = scratch;
 	if(threadIdx.x < 32){
 		
 		if (blockDim.x >= 64){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 32];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 16];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 8];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 4];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 2];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 1];
 		}
 		else if (blockDim.x >= 32){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+			scratch[threadIdx.x] += scratch[threadIdx.x + 16];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 8];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 4];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 2];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 1];	
 		}
 		else if (blockDim.x >= 16){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+			scratch[threadIdx.x] += scratch[threadIdx.x + 8];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 4];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 2];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 1];	
 		}
 		else if (blockDim.x >= 8){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+			scratch[threadIdx.x] += scratch[threadIdx.x + 4];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 2];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 1];	
 		}
 		else if (blockDim.x >= 4){
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+			scratch[threadIdx.x] += scratch[threadIdx.x + 2];
+			scratch[threadIdx.x] += scratch[threadIdx.x + 1];	
 		}
 		else {
-			wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];	
+			scratch[threadIdx.x] += scratch[threadIdx.x + 1];	
 		}
 
-		// if(blockDim.x >= 64)	wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-		// if(blockDim.x >= 32)	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+		// if(blockDim.x >= 64)	scratch[threadIdx.x] += scratch[threadIdx.x + 32];
+		// if(blockDim.x >= 32)	scratch[threadIdx.x] += scratch[threadIdx.x + 16];
 		// //if(blockDim.x >= 16)	
-		// wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+		// scratch[threadIdx.x] += scratch[threadIdx.x + 8];
 		// //if(blockDim.x >= 8)		
-		// wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+		// scratch[threadIdx.x] += scratch[threadIdx.x + 4];
 		// //if(blockDim.x >= 4)		
-		// wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+		// scratch[threadIdx.x] += scratch[threadIdx.x + 2];
 		// //if(blockDim.x >= 2)		
-		// wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+		// scratch[threadIdx.x] += scratch[threadIdx.x + 1];
 
 	}
 
