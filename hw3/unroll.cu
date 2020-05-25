@@ -57,14 +57,14 @@ dtype reduce_cpu(dtype *data, int n) {
     return sum;
 }
 
-// __device__ void warpReduce(volatile dtype *wSratch, int tid){
-// 	wScratch[tid] += wScratch[tid + 32];
-// 	wScratch[tid] += wScratch[tid + 16];
-// 	wScratch[tid] += wScratch[tid + 8];
-// 	wScratch[tid] += wScratch[tid + 4];
-// 	wScratch[tid] += wScratch[tid + 2];
-// 	wScratch[tid] += wScratch[tid + 1];
-// }
+__device__ void warpReduce(volatile dtype *wSratch, int tid){
+	wScratch[tid] += wScratch[tid + 32];
+	wScratch[tid] += wScratch[tid + 16];
+	wScratch[tid] += wScratch[tid + 8];
+	wScratch[tid] += wScratch[tid + 4];
+	wScratch[tid] += wScratch[tid + 2];
+	wScratch[tid] += wScratch[tid + 1];
+}
 
 __global__ void
 kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
@@ -92,18 +92,20 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 		__syncthreads ();
 	}
-
-	//warpReduce(scratch, threadIdx.x);
-
-	if(threadIdx.x < 32){
-		volatile dtype *wScratch = scratch;
-		wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-		wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-		wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-		wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-		wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-		wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+	if (threadIdx < 32){
+		warpReduce(scratch, threadIdx.x);
 	}
+	
+
+	// if(threadIdx.x < 32){
+	// 	volatile dtype *wScratch = scratch;
+	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
+	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
+	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
+	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
+	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
+	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
+	// }
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
