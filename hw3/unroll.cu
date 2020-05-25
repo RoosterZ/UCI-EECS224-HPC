@@ -93,30 +93,30 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	}
 	__syncthreads ();
 
+	if (blockDim.x >= 64){
+		for(unsigned int s = blockDim.x >> 1 ; s > 32; s = s >> 1) {
 
-	for(unsigned int s = blockDim.x >> 1 ; s > 32; s = s >> 1) {
-
-		if(threadIdx.x < s){
-			scratch[threadIdx.x] += scratch[threadIdx.x + s];
-		}
-
-		__syncthreads ();
-	}
-	//if (threadIdx.x < 32){
-	//	volatile dtype *wScratch = scratch;
-	warpReduce(scratch, threadIdx.x, blockDim.x);
-	//}
+			if(threadIdx.x < s){
+				scratch[threadIdx.x] += scratch[threadIdx.x + s];
+			}
 	
+			__syncthreads ();
+		}
+	
+		warpReduce(scratch, threadIdx.x, blockDim.x);
+	}
+	else{
+		for(unsigned int s = blockDim.x >> 1 ; s > 0; s = s >> 1) {
 
-	// if(threadIdx.x < 32){
-	// 	volatile dtype *wScratch = scratch;
-	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 32];
-	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 16];
-	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 8];
-	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 4];
-	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 2];
-	// 	wScratch[threadIdx.x] += wScratch[threadIdx.x + 1];
-	// }
+			if(threadIdx.x < s){
+				scratch[threadIdx.x] += scratch[threadIdx.x + s];
+			}
+	
+			__syncthreads ();
+		}		
+	}
+
+
 
 	if(threadIdx.x == 0) {
 		g_odata[bid] = scratch[0];
