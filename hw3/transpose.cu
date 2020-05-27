@@ -57,7 +57,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	x = blockDim.x * blockIdx.y + threadIdx.x;
 	y = blockIdx.x * blockDim.x + threadIdx.y;
  
-	for (i = 0; i < blockDim.x; i++){
+	for (i = 0; i < blockDim.x; i += BLOCK_DIM_Y){
 		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
 	}
     
