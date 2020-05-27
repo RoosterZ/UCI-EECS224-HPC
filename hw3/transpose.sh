@@ -27,7 +27,7 @@ echo ""
 echo "=== Running 5 trials of naive ... ==="
 for trial in 1 2; do
   echo "*** Trial ${trial} ***"
-  ./transpose
+  ./transpose 1024
 done
 
 echo ""
