@@ -7,7 +7,7 @@
 #define MIN(x,y) ((x < y) ? x : y)
 #define MAX(x,y) ((x > y) ? x : y)
 #define MIN_THREAD 32
-#define MAX_THREAD 256
+#define MAX_THREAD 64
 //#define CASCADING 8
 
 
@@ -39,7 +39,9 @@ void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
-	__shared__ dtype scratch[blockDim.x][blockDim.x + 1];
+	const unsigned int scratch_dim = blockDim.x;
+	__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
+
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockDim.x * blockIdx.y;
 	int i;
