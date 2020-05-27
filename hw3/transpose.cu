@@ -9,6 +9,7 @@
 #define MIN_THREAD 32
 #define MAX_THREAD 64
 //#define CASCADING 8
+#define SCRATCH_SIZE 4160
 
 
 typedef float dtype;
@@ -39,9 +40,9 @@ void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
-	const unsigned int scratch_dim = blockDim.x;
-	__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
-
+	//const unsigned int scratch_dim = blockDim.x;
+	//__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
+	__shared__ dtype scratch[64][65];
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockDim.x * blockIdx.y;
 	int i;
@@ -55,7 +56,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	x = blockDim.x * blockIdx.y + threadIdx.x;
 	y = blockIdx.x * blockDim.x;
  
-	for (i = 0; i < blockDim.x, i++){
+	for (i = 0; i < blockDim.x; i++){
 		AT[(y+i) * N + x] = scratch[threadIdx.x][i];
 	}
     
