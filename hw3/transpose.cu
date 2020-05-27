@@ -144,7 +144,10 @@ gpuTranspose (dtype* A, dtype* AT, int N)
            t_gpu, (N * N) / t_gpu * 1e-9 );
 	fprintf (stdout, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
 	t_gpu, (N * N) / t_gpu * 1e-9 );
-	
+
+	double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
+	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
+
 	CUDA_CHECK_ERROR (cudaMemcpy (AT, d_odata, N * N * sizeof (dtype), 
 	cudaMemcpyDeviceToHost));
 
@@ -189,8 +192,7 @@ main(int argc, char** argv)
 		   t_cpu);
 	fprintf (stdout, "Time to execute CPU transpose kernel: %Lg secs\n",
 	t_cpu);
-	double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
-	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
+
 
   	/* check correctness */
 	err = cmpArr (ATgpu, ATcpu, N * N);
