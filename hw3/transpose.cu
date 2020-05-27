@@ -42,7 +42,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	//const unsigned int scratch_dim = blockDim.x;
 	//__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
-	__shared__ dtype scratch[64][65];
+	__shared__ dtype scratch[64][64];
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockDim.x * blockIdx.y;
 	int i;
