@@ -5,7 +5,7 @@
 # MPICOPTFLAGS = -O3 -g -lpng
 # MPILDFLAGS =
 
-TARGETS = naive stride sequential first_add unroll multiple
+TARGETS = naive stride sequential first_add unroll multiple transpose
 
 
 all: $(TARGETS)
