@@ -10,6 +10,7 @@
 #define MAX_THREAD 32
 //#define CASCADING 8
 #define SCRATCH_SIZE 4160
+#define BLOCK_DIM_Y 8
 
 
 typedef float dtype;
@@ -28,7 +29,7 @@ unsigned int nextPow2( unsigned int x ) {
 void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy){
 	//int blockx, blocky, gridx, gridy;
 	bx = dim < MAX_THREAD ? MAX(nextPow2(dim), MIN_THREAD) : MAX_THREAD;
-	by = 1;
+	by = BLOCK_DIM_Y;
 	//gridx = ceil(dim / float(blockx));
 	gx = (dim + bx - 1) / bx;
 
@@ -44,20 +45,20 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	//__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
 	__shared__ dtype scratch[32][33];
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockDim.x * blockIdx.y;
+	int y = blockIdx.y * blockDim.x + threadIdx.y;
 	int i;
 	//int dim = gridDim.x * blockDim.x;
-	for (i = 0; i < blockDim.x; i++){
-		scratch[i][threadIdx.x] = A[(y+i) * N + x]; 
+	for (i = 0; i < blockDim.x; i += BLOCK_DIM_Y){
+		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
 	}
 
 	__syncthreads();
 
 	x = blockDim.x * blockIdx.y + threadIdx.x;
-	y = blockIdx.x * blockDim.x;
+	y = blockIdx.x * blockDim.x + threadIdx.y;
  
 	for (i = 0; i < blockDim.x; i++){
-		AT[(y+i) * N + x] = scratch[threadIdx.x][i];
+		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
 	}
     
 
