@@ -4,3 +4,6 @@ module load gcc/4.9.0
 
 
 ssh –X –Y zeyuz18@hpc.oit.uci.edu
+
+nvvp –vm /usr/lib/jvm/java-8-openjdk.x86_64/jre/bin/java
+nvvp –vm /usr/bin/java

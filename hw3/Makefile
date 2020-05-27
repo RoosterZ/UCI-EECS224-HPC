@@ -28,6 +28,9 @@ unroll: unroll.cu timer.c
 multiple: multiple.cu timer.c
 	nvcc multiple.cu timer.c -o $@
 
+transpose: transpose.cu timer.c
+	nvcc transpose.cu timer.c -o $@
+
 clean:
 	rm -f $(TARGETS)
 
