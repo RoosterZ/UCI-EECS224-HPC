@@ -7,7 +7,7 @@
 #define MIN(x,y) ((x < y) ? x : y)
 #define MAX(x,y) ((x > y) ? x : y)
 #define MIN_THREAD 32
-#define MAX_THREAD 64
+#define MAX_THREAD 32
 //#define CASCADING 8
 #define SCRATCH_SIZE 4160
 
@@ -42,7 +42,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	//const unsigned int scratch_dim = blockDim.x;
 	//__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
-	__shared__ dtype scratch[64][64];
+	__shared__ dtype scratch[32][33];
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockDim.x * blockIdx.y;
 	int i;
