@@ -189,6 +189,8 @@ main(int argc, char** argv)
 		   t_cpu);
 	fprintf (stdout, "Time to execute CPU transpose kernel: %Lg secs\n",
 	t_cpu);
+	double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
+	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
 
   	/* check correctness */
 	err = cmpArr (ATgpu, ATcpu, N * N);
@@ -197,7 +199,7 @@ main(int argc, char** argv)
 		fprintf (stdout, "Transpose failed: %d\n", err);
 	} else {
 		fprintf (stderr, "Transpose successful\n");
-		fprintf (stdout, "Transpose failed: %d\n", err);
+		fprintf (stdout, "Transpose successful\n");
 	}
 
 	free (A);
