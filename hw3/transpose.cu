@@ -10,7 +10,8 @@
 #define MAX_THREAD 32
 //#define CASCADING 8
 #define SCRATCH_SIZE 4160
-#define BLOCK_DIM_Y 8
+#define BLOCK_DIM_Y 16
+#define PATCH_DIM 32
 
 
 typedef float dtype;
@@ -38,31 +39,62 @@ void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy
 	//cout << bx << " " << gridx << " " << gridy;
 }
 
+// __global__ 
+// void matTrans(dtype* AT, dtype* A, int N)  {
+// 	/* Fill your code here */
+// 	//const unsigned int scratch_dim = blockDim.x;
+// 	//__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
+// 	__shared__ dtype scratch[32][33];
+// 	int x = blockIdx.x * blockDim.x + threadIdx.x;
+// 	int y = blockIdx.y * blockDim.x + threadIdx.y;
+
+	
+// 	int i;
+// 	//int dim = gridDim.x * blockDim.x;
+// 	for (i = 0; i < blockDim.x; i += BLOCK_DIM_Y){
+// 		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
+// 	}
+
+// 	__syncthreads();
+
+// 	x = blockDim.x * blockIdx.y + threadIdx.x;
+// 	y = blockIdx.x * blockDim.x + threadIdx.y;
+ 
+// 	for (i = 0; i < blockDim.x; i += BLOCK_DIM_Y){
+// 		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
+// 	}
+    
+
+// }
+
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	//const unsigned int scratch_dim = blockDim.x;
 	//__shared__ dtype scratch[scratch_dim][scratch_dim + 1];
-	__shared__ dtype scratch[32][33];
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.x + threadIdx.y;
+	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
+	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
+	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
+
 	int i;
 	//int dim = gridDim.x * blockDim.x;
-	for (i = 0; i < blockDim.x; i += BLOCK_DIM_Y){
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
 	}
 
 	__syncthreads();
 
-	x = blockDim.x * blockIdx.y + threadIdx.x;
-	y = blockIdx.x * blockDim.x + threadIdx.y;
+	x = PATCH_DIM * blockIdx.y + threadIdx.x;
+	y = blockIdx.x * PATCH_DIM + threadIdx.y;
  
-	for (i = 0; i < blockDim.x; i += BLOCK_DIM_Y){
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
 	}
     
 
 }
+
+
 
 void
 parseArg (int argc, char** argv, int* N)
