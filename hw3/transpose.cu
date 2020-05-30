@@ -10,7 +10,7 @@
 #define MAX_THREAD 32
 //#define CASCADING 8
 #define SCRATCH_SIZE 4160
-#define BLOCK_DIM_Y 16
+#define BLOCK_DIM_Y 8
 #define PATCH_DIM 32
 
 
