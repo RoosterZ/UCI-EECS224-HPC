@@ -78,22 +78,34 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 
 	int i;
 	//int dim = gridDim.x * blockDim.x;
+	// for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
+	// 	scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
+	// }
 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
-		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
-	}
+		AT[(y+i) * N + x] = A[(y+i) * N + x]; 
+	}	
 
-	__syncthreads();
+	// __syncthreads();
 
-	x = PATCH_DIM * blockIdx.y + threadIdx.x;
-	y = blockIdx.x * PATCH_DIM + threadIdx.y;
+	// x = PATCH_DIM * blockIdx.y + threadIdx.x;
+	// y = blockIdx.x * PATCH_DIM + threadIdx.y;
  
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
-		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
-	}
+	// for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
+	// 	AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
+	// }
     
 
 }
 
+// __global__ void copy(float *odata, const float *idata)
+// {
+//   int x = blockIdx.x * TILE_DIM + threadIdx.x;
+//   int y = blockIdx.y * TILE_DIM + threadIdx.y;
+//   int width = gridDim.x * TILE_DIM;
+
+//   for (int j = 0; j < TILE_DIM; j+= BLOCK_ROWS)
+//     odata[(y+j)*width + x] = idata[(y+j)*width + x];
+// }
 
 
 void
