@@ -46,7 +46,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	int incy = BLOCK_DIM_Y * N;
 	int i;
 
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y; y += incy) {
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, y += incy) {
 		scratch[threadIdx.y + i][threadIdx.x] = A[y + x]; 
 	}
 
