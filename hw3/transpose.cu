@@ -16,15 +16,17 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 
-	 int i;
+	int i;
 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
 	}
 
-	__syncthreads();
+	//__syncthreads();
 
 	x = PATCH_DIM * blockIdx.y + threadIdx.x;
 	y = blockIdx.x * PATCH_DIM + threadIdx.y;
+
+	__syncthreads();
  
 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
@@ -105,10 +107,11 @@ gpuTranspose (dtype* A, dtype* AT, int N)
   
 	stopwatch_start (timer);
 	  
-	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
+	
 	/* run your kernel here */
+	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 
-  	//cudaThreadSynchronize ();
+  	cudaThreadSynchronize ();
   	t_gpu = stopwatch_stop (timer);
   	fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
            t_gpu, (N * N) / t_gpu * 1e-9 );
