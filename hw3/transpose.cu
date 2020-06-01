@@ -53,12 +53,12 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	//__syncthreads();
 
 	x = PATCH_DIM * blockIdx.y + threadIdx.x;
-	y = blockIdx.x * PATCH_DIM + threadIdx.y;
+	y = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
 
 	__syncthreads();
  
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y) {
-		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, y += incy) {
+		AT[y + x] = scratch[threadIdx.x][threadIdx.y + i];
 	}
 }
 
