@@ -15,10 +15,10 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	//const unsigned int scratch_dim = blockDim.x;
 	
 	// __shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
-	// int x = blockIdx.x * PATCH_DIM + threadIdx.x;
-	// int y = blockIdx.y * PATCH_DIM + threadIdx.y;
+	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
+	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 
-	// int i;
+	 int i;
 	// //int dim = gridDim.x * blockDim.x;
 	// for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 	// 	scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
