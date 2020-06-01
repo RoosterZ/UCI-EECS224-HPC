@@ -31,6 +31,48 @@ for trial in 1 2 3 4 5; do
 done
 
 echo ""
+echo "=== Running 5 trials of naive ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./naive
+done
+
+echo ""
+echo "=== Running 5 trials of stride ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./stride
+done
+
+echo ""
+echo "=== Running 5 trials of sequential ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./sequential
+done
+
+echo ""
+echo "=== Running 5 trials of first_add ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./first_add
+done
+
+echo ""
+echo "=== Running 5 trials of unroll ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./unroll
+done
+
+echo ""
+echo "=== Running 5 trials of transpose ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./transpose
+done
+
+echo ""
 echo "=== Done! ==="
 
 # eof
