@@ -162,8 +162,8 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 	CUDA_CHECK_ERROR (cudaMemcpy (d_idata, A, N * N * sizeof (dtype), 
 	cudaMemcpyHostToDevice));
 
-	int block_x, block_y, grid_x, grid_y;
-	getNumBlocksAndThreads(N, block_x, block_y, grid_x, grid_y);
+	// int block_x, block_y, grid_x, grid_y;
+	// getNumBlocksAndThreads(N, block_x, block_y, grid_x, grid_y);
 	// dim3 gb(grid_x, grid_y, 1);
 	// dim3 tb(block_x, block_y, 1);
 	dim3 gb(32, 8, 1);
