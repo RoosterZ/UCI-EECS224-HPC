@@ -91,8 +91,8 @@ void
 gpuTranspose (dtype* A, dtype* AT, int N)
 {
 	cudaEvent_t startEvent, stopEvent;
-	checkCuda( cudaEventCreate(&startEvent) );
-	checkCuda( cudaEventCreate(&stopEvent) );
+	CUDA_CHECK_ERROR( cudaEventCreate(&startEvent) );
+	CUDA_CHECK_ERROR( cudaEventCreate(&stopEvent) );
 	float ms;
 
 	dtype *d_idata, *d_odata;
