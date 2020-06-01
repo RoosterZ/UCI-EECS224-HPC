@@ -6,7 +6,7 @@
 
 typedef float dtype;
 
-#define BLOCK_DIM_Y 8
+#define BLOCK_DIM_Y 32
 #define PATCH_DIM 32
 
 __global__ 
@@ -94,8 +94,8 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 	// getNumBlocksAndThreads(N, block_x, block_y, grid_x, grid_y);
 	// dim3 gb(grid_x, grid_y, 1);
 	// dim3 tb(block_x, block_y, 1);
-	dim3 gb(32, 32, 1);
-	dim3 tb(32, 8, 1);
+	dim3 gb(N / PATCH_DIM, N / PATCH_DIM, 1);
+	dim3 tb(PATCH_DIM, BLOCK_DIM_Y, 1);
 	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 
 	struct stopwatch_t* timer = NULL;
