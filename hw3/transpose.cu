@@ -14,27 +14,27 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	//const unsigned int scratch_dim = blockDim.x;
 	
-	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
-	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
-	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
+	// __shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
+	// int x = blockIdx.x * PATCH_DIM + threadIdx.x;
+	// int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 
-	 int i;
-	// //int dim = gridDim.x * blockDim.x;
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
-		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
-	}
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
-		AT[(y+i) * N + x] = A[(y+i) * N + x]; 
-	}	
-
-	__syncthreads();
-
-	x = PATCH_DIM * blockIdx.y + threadIdx.x;
-	y = blockIdx.x * PATCH_DIM + threadIdx.y;
- 
+	//  int i;
+	// // //int dim = gridDim.x * blockDim.x;
 	// for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
-	// 	AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
+	// 	scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
 	// }
+	// for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
+	// 	AT[(y+i) * N + x] = A[(y+i) * N + x]; 
+	// }	
+
+	// __syncthreads();
+
+	// x = PATCH_DIM * blockIdx.y + threadIdx.x;
+	// y = blockIdx.x * PATCH_DIM + threadIdx.y;
+ 
+	// // for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
+	// // 	AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
+	// // }
     
 
 }
