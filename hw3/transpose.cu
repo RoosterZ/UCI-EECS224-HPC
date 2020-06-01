@@ -12,20 +12,14 @@ typedef float dtype;
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
-	//const unsigned int scratch_dim = blockDim.x;
-	
 	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 
 	 int i;
-	// //int dim = gridDim.x * blockDim.x;
 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
 	}
-	// for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
-	// 	AT[(y+i) * N + x] = A[(y+i) * N + x]; 
-	// }	
 
 	__syncthreads();
 
@@ -35,8 +29,6 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		AT[(y+i) * N + x] = scratch[threadIdx.x][i + threadIdx.y];
 	}
-    
-
 }
 
 
@@ -90,11 +82,6 @@ cmpArr (dtype* a, dtype* b, int N)
 void
 gpuTranspose (dtype* A, dtype* AT, int N)
 {
-	cudaEvent_t startEvent, stopEvent;
-	CUDA_CHECK_ERROR( cudaEventCreate(&startEvent) );
-	CUDA_CHECK_ERROR( cudaEventCreate(&stopEvent) );
-	float ms;
-
 	dtype *d_idata, *d_odata;
 	CUDA_CHECK_ERROR (cudaMalloc (&d_idata, N * N * sizeof (dtype)));
 	CUDA_CHECK_ERROR (cudaMalloc (&d_odata, N * N * sizeof (dtype)));
@@ -117,24 +104,18 @@ gpuTranspose (dtype* A, dtype* AT, int N)
   	timer = stopwatch_create ();
   
 	stopwatch_start (timer);
-	CUDA_CHECK_ERROR( cudaEventRecord(startEvent, 0));  
+	  
 	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 	/* run your kernel here */
-	CUDA_CHECK_ERROR( cudaEventRecord(stopEvent, 0) );
-	CUDA_CHECK_ERROR( cudaEventSynchronize(stopEvent) );
-	CUDA_CHECK_ERROR( cudaEventElapsedTime(&ms, startEvent, stopEvent) );
 
-  	cudaThreadSynchronize ();
+  	//cudaThreadSynchronize ();
   	t_gpu = stopwatch_stop (timer);
   	fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
            t_gpu, (N * N) / t_gpu * 1e-9 );
 	fprintf (stdout, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
 	t_gpu, (N * N) / t_gpu * 1e-9 );
 
-
-	// double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
-	// fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
-	double bw = (N * N * sizeof(dtype)) / (ms * 1e6);
+	double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
 	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
 
 	CUDA_CHECK_ERROR (cudaMemcpy (AT, d_odata, N * N * sizeof (dtype), 
