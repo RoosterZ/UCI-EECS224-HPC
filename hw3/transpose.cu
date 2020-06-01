@@ -90,6 +90,11 @@ cmpArr (dtype* a, dtype* b, int N)
 void
 gpuTranspose (dtype* A, dtype* AT, int N)
 {
+	cudaEvent_t startEvent, stopEvent;
+	checkCuda( cudaEventCreate(&startEvent) );
+	checkCuda( cudaEventCreate(&stopEvent) );
+	float ms;
+
 	dtype *d_idata, *d_odata;
 	CUDA_CHECK_ERROR (cudaMalloc (&d_idata, N * N * sizeof (dtype)));
 	CUDA_CHECK_ERROR (cudaMalloc (&d_odata, N * N * sizeof (dtype)));
@@ -112,9 +117,12 @@ gpuTranspose (dtype* A, dtype* AT, int N)
   	timer = stopwatch_create ();
   
 	stopwatch_start (timer);
-	  
+	checkCuda( cudaEventRecord(startEvent, 0);  
 	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 	/* run your kernel here */
+	checkCuda( cudaEventRecord(stopEvent, 0) );
+	checkCuda( cudaEventSynchronize(stopEvent) );
+	checkCuda( cudaEventElapsedTime(&ms, startEvent, stopEvent) );
 
   	cudaThreadSynchronize ();
   	t_gpu = stopwatch_stop (timer);
@@ -123,7 +131,10 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 	fprintf (stdout, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
 	t_gpu, (N * N) / t_gpu * 1e-9 );
 
+
 	double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
+	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
+	double bw = (N * N * sizeof(dtype)) / (ms * 1e6);
 	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
 
 	CUDA_CHECK_ERROR (cudaMemcpy (AT, d_odata, N * N * sizeof (dtype), 
