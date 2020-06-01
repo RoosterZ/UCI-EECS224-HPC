@@ -14,16 +14,15 @@
 
 typedef float dtype;
 
-
-unsigned int nextPow2( unsigned int x ) {
-	--x;
-	x |= x >> 1;
-	x |= x >> 2;
-	x |= x >> 4;
-	x |= x >> 8;
-	x |= x >> 16;
-	return ++x;
-}
+// unsigned int nextPow2( unsigned int x ) {
+// 	--x;
+// 	x |= x >> 1;
+// 	x |= x >> 2;
+// 	x |= x >> 4;
+// 	x |= x >> 8;
+// 	x |= x >> 16;
+// 	return ++x;
+// }
   
 // void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy){
 // 	//int blockx, blocky, gridx, gridy;
@@ -70,7 +69,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	//const unsigned int scratch_dim = blockDim.x;
 	
-	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
+	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM];
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 
