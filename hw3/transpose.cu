@@ -117,12 +117,12 @@ gpuTranspose (dtype* A, dtype* AT, int N)
   	timer = stopwatch_create ();
   
 	stopwatch_start (timer);
-	checkCuda( cudaEventRecord(startEvent, 0);  
+	CUDA_CHECK_ERROR( cudaEventRecord(startEvent, 0));  
 	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 	/* run your kernel here */
-	checkCuda( cudaEventRecord(stopEvent, 0) );
-	checkCuda( cudaEventSynchronize(stopEvent) );
-	checkCuda( cudaEventElapsedTime(&ms, startEvent, stopEvent) );
+	CUDA_CHECK_ERROR( cudaEventRecord(stopEvent, 0) );
+	CUDA_CHECK_ERROR( cudaEventSynchronize(stopEvent) );
+	CUDA_CHECK_ERROR( cudaEventElapsedTime(&ms, startEvent, stopEvent) );
 
   	cudaThreadSynchronize ();
   	t_gpu = stopwatch_stop (timer);
@@ -132,8 +132,8 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 	t_gpu, (N * N) / t_gpu * 1e-9 );
 
 
-	double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
-	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
+	// double bw = (N * N * sizeof(dtype)) / (t_gpu * 1e9);
+	// fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
 	double bw = (N * N * sizeof(dtype)) / (ms * 1e6);
 	fprintf (stdout, "Effective bandwidth: %.2lf GB/s\n", bw);
 
