@@ -31,13 +31,6 @@ for trial in 1 2 3 4 5; do
 done
 
 echo ""
-echo "=== Running 5 trials of naive ... ==="
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./naive
-done
-
-echo ""
 echo "=== Running 5 trials of stride ... ==="
 for trial in 1 2 3 4 5; do
   echo "*** Trial ${trial} ***"
