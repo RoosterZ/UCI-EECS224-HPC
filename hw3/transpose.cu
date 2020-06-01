@@ -6,7 +6,7 @@
 
 typedef float dtype;
 
-#define BLOCK_DIM_Y 32
+#define BLOCK_DIM_Y 16
 #define PATCH_DIM 32
 
 __global__ 
