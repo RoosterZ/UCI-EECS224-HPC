@@ -82,17 +82,6 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 		//__syncthreads ();
 	}
 
-	// if(i < n){
-	// 	scratch[threadIdx.x] = g_idata[i];
-	// 	if(i + blockDim.x < n){
-	// 		scratch[threadIdx.x] += g_idata[i + blockDim.x];
-	// 	}
-	// } else {
-	// 	scratch[threadIdx.x] = 0.0;
-
-
-	// }
-
 	if (blockDim.x >= 64){
 		__syncthreads ();
 		for(unsigned int s = blockDim.x >> 1 ; s > 32; s = s >> 1) {
@@ -248,7 +237,6 @@ main(int argc, char** argv)
 
 	if(abs (h_odata - h_cpu) > 1e-5) {
 	fprintf(stderr, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
-	fprintf(stdout, "FAILURE: GPU: %f  CPU: %f\n", h_odata, h_cpu);
 	} else {
     printf("SUCCESS: GPU: %f  CPU: %f\n", h_odata, h_cpu);
 	}
