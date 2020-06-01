@@ -4,12 +4,10 @@
 #include "cuda_utils.h"
 #include "timer.c"
 
-#define MIN(x,y) ((x < y) ? x : y)
-#define MAX(x,y) ((x > y) ? x : y)
-#define MIN_THREAD 32
-#define MAX_THREAD 32
-//#define CASCADING 8
-#define SCRATCH_SIZE 4160
+// #define MIN(x,y) ((x < y) ? x : y)
+// #define MAX(x,y) ((x > y) ? x : y)
+// #define MIN_THREAD 32
+// #define MAX_THREAD 32
 #define BLOCK_DIM_Y 8
 #define PATCH_DIM 32
 
@@ -27,17 +25,17 @@ unsigned int nextPow2( unsigned int x ) {
 	return ++x;
 }
   
-void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy){
-	//int blockx, blocky, gridx, gridy;
-	bx = dim < MAX_THREAD ? MAX(nextPow2(dim), MIN_THREAD) : MAX_THREAD;
-	by = BLOCK_DIM_Y;
-	//gridx = ceil(dim / float(blockx));
-	gx = (dim + bx - 1) / bx;
+// void getNumBlocksAndThreads(unsigned int dim, int &bx, int &by, int &gx, int &gy){
+// 	//int blockx, blocky, gridx, gridy;
+// 	bx = dim < MAX_THREAD ? MAX(nextPow2(dim), MIN_THREAD) : MAX_THREAD;
+// 	by = BLOCK_DIM_Y;
+// 	//gridx = ceil(dim / float(blockx));
+// 	gx = (dim + bx - 1) / bx;
 
-	//gridy = ceil(dim / float(CASCADING));
-	gy = gx;
-	//cout << bx << " " << gridx << " " << gridy;
-}
+// 	//gridy = ceil(dim / float(CASCADING));
+// 	gy = gx;
+// 	//cout << bx << " " << gridx << " " << gridy;
+// }
 
 // __global__ 
 // void matTrans(dtype* AT, dtype* A, int N)  {
@@ -77,7 +75,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 
 	int i;
-	int dim = gridDim.x * blockDim.x;
+	//int dim = gridDim.x * blockDim.x;
 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y){
 		scratch[i + threadIdx.y][threadIdx.x] = A[(y+i) * N + x]; 
 	}
