@@ -66,10 +66,24 @@ for trial in 1 2 3 4 5; do
 done
 
 echo ""
-echo "=== Running 5 trials of transpose ... ==="
+echo "=== Running 5 trials of transpose (1024) ... ==="
 for trial in 1 2 3 4 5; do
   echo "*** Trial ${trial} ***"
-  ./transpose
+  ./transpose 1024
+done
+
+echo ""
+echo "=== Running 5 trials of transpose (2048) ... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./transpose 2048
+done
+
+echo ""
+echo "=== Running 5 trials of transpose (4096)... ==="
+for trial in 1 2 3 4 5; do
+  echo "*** Trial ${trial} ***"
+  ./transpose 4096
 done
 
 echo ""
