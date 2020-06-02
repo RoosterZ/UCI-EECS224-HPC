@@ -37,8 +37,8 @@ typedef float dtype;
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
-	int x = blockIdx.x * TILE_DIM + threadIdx.x;
-	int y = blockIdx.y * TILE_DIM + threadIdx.y;
+	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
+	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
   
 	for (int j = 0; j < PATCH_DIM; j+= BLOCK_DIM_Y)
 	  AT[x*N + (y+j)] = A[(y+j)*N + x];
