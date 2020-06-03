@@ -9,40 +9,40 @@ typedef float dtype;
 #define BLOCK_DIM_Y 16
 #define PATCH_DIM 32
 
-// __global__ 
-// void matTrans(dtype* AT, dtype* A, int N)  {
-// 	/* Fill your code here */
-// 	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
-// 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
-// 	int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
-// 	int inc = BLOCK_DIM_Y * N;
-// 	int i;
-
-// 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
-// 		scratch[threadIdx.y + i][threadIdx.x] = A[base + x]; 
-// 	}
-
-// 	//__syncthreads();
-
-// 	x = PATCH_DIM * blockIdx.y + threadIdx.x;
-// 	base = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
-
-// 	__syncthreads();
- 
-// 	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
-// 		AT[base + x] = scratch[threadIdx.x][threadIdx.y + i];
-// 	}
-// }
-
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
+	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM];
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
-	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
-  
-	for (int j = 0; j < PATCH_DIM; j+= BLOCK_DIM_Y)
-	  AT[x*N + (y+j)] = A[(y+j)*N + x];
+	int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
+	int inc = BLOCK_DIM_Y * N;
+	int i;
+
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
+		scratch[threadIdx.y + i][threadIdx.x] = A[base + x]; 
+	}
+
+	//__syncthreads();
+
+	x = PATCH_DIM * blockIdx.y + threadIdx.x;
+	base = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
+
+	__syncthreads();
+ 
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
+		AT[base + x] = scratch[threadIdx.x][threadIdx.y + i];
+	}
 }
+
+// __global__ 
+// void matTrans(dtype* AT, dtype* A, int N)  {
+// 	/* Fill your code here */
+// 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
+// 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
+  
+// 	for (int j = 0; j < PATCH_DIM; j+= BLOCK_DIM_Y)
+// 	  AT[x*N + (y+j)] = A[(y+j)*N + x];
+// }
 
 
 void
