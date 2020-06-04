@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N REDUCE
-#$ -q gpu
+#$ -q gpu2
 
 # Notes: 
 # The GPU node (compute-1-14) has 4 Tesla M2090 GPU cards. The node also
