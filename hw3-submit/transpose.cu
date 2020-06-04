@@ -18,7 +18,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	int inc = BLOCK_DIM_Y * N;
 	int i;
 
-	for (i = 0; i < PATCH_DIM && base + x < N * N; i += BLOCK_DIM_Y, base += inc) {
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
 		scratch[threadIdx.y + i][threadIdx.x] = A[base + x]; 
 	}
 
@@ -27,7 +27,7 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 
 	__syncthreads();
  
-	for (i = 0; i < PATCH_DIM && base + x < N * N; i += BLOCK_DIM_Y, base += inc) {
+	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
 		AT[base + x] = scratch[threadIdx.x][threadIdx.y + i];
 	}
 }
@@ -90,7 +90,7 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 	CUDA_CHECK_ERROR (cudaMemcpy (d_idata, A, N * N * sizeof (dtype), 
 	cudaMemcpyHostToDevice));
 
-	dim3 gb((N + PATCH_DIM - 1 / PATCH_DIM), (N + PATCH_DIM - 1) / PATCH_DIM, 1);
+	dim3 gb(N / PATCH_DIM, N / PATCH_DIM, 1);
 	dim3 tb(PATCH_DIM, BLOCK_DIM_Y, 1);
 	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 

@@ -24,24 +24,24 @@ echo "Node:" `hostname`
 echo "Current directory: ${PWD}"
 
 echo ""
-echo "=== Running 3 trials of transpose (1024)... ==="
+echo "=== Running 3 trials of transpose (1000)... ==="
 for trial in 1 2 3; do 
   echo "*** Trial ${trial} ***"
   ./transpose 1024
 done
 
 echo ""
-echo "=== Running 3 trials of transpose (2048)... ==="
+echo "=== Running 3 trials of transpose (19)... ==="
 for trial in 1 2 3; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 2048
+  ./transpose 19
 done
 
 echo ""
-echo "=== Running 3 trials of transpose (4096)... ==="
+echo "=== Running 3 trials of transpose (1024)... ==="
 for trial in 1 2 3; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 4096
+  ./transpose 1024
 done
 
 echo ""

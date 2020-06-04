@@ -40,13 +40,19 @@ Because we are dealing with a 2D matrix, it is more natural to let threads and t
 
 I firstly wrote a intuitive approach. Thread blocks directly save an element in the input memory to its corresponding position of the output memory. Only one of the read/write operation toward the global memory could be coalesced. 
 
+With this intuitive approach, I achieved about $4.0$ billion elements/sec bandwidth with $N = 2048$.
+
 I then add the usage of shared memory to my code. Shared memory is fast and does not have the coalescing issue. It does not matter if we read the shared memory row by row or column by column. So I use an 2D scratch of size 32 * 32 in shared memory. I read the input matrix to shared memory row by row (coalesced) and also write it back to output global memory row by row (by reading the shared memory column by column). In this way, both read and write of the global memory is row by row (coalesced). 
 
+With this improved approach where both read and write to global memory are coalesced, I achieved about $7.2$ billion elements/sec bandwidth with $N = 2048$. 
+
 Then I check Nvidia documentation for Compute Capability 2.0 (The Compute Capability of Tesla 2090 on $gpu$ queue). It turns out that Tesla 2090 has 32 shared memory banks. If we use 32 * 32 scratch, all 32 threads within a warp attempt to read the same memory bank when reading the shared scratch column by column, leading to a 32-way bank conflict. I then adjust the scratch size to be 32 * 33. By wasting $\frac{1}{33}$ memory, the element in the same column is evenly distributed across the 32 memory banks of the shared memory. Thus, there is no bank conflicts when multiple threads access data at the same column simultaneously. 
+
+With this improved approach where both read and write to global memory are coalesced, I achieved about $13.5$ billion elements/sec bandwidth with $N = 2048$. 
 
 | N                                  | 1024  | 2048  | 4096  |
 | ---------------------------------- | ----- | ----- | ----- |
 | Bandwidth (Billion elements / sec) | 10.74 | 13.53 | 14.30 |
 
-Above is the test result for this final optimized version of the program. 
+Above is the test result (with different matrix size $N$) for this final optimized version of matrix transpose. As is shown, as the matrix size grows, effective bandwidth also grows because the overhead (probably comes from thread synchronization) is amortized. 
 
