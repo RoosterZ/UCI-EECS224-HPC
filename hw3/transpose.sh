@@ -25,23 +25,23 @@ echo "Current directory: ${PWD}"
 
 echo ""
 echo "=== Running 3 trials of transpose (1000)... ==="
-for trial in 1 2 3; do 
+for trial in 1 2 3 4; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 19
+  ./transpose 1000
 done
 
 echo ""
 echo "=== Running 3 trials of transpose (19)... ==="
-for trial in 1 2 3; do 
+for trial in 1 2 3 4; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 3000
+  ./transpose 2000
 done
 
 echo ""
 echo "=== Running 3 trials of transpose (1024)... ==="
-for trial in 1 2 3; do 
+for trial in 1 2 3 4; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 4096
+  ./transpose 4000
 done
 
 echo ""

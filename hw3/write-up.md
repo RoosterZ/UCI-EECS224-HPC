@@ -36,7 +36,9 @@ I average the bandwidth result of 5 trials for different kernels. The result is 
 
 ### Matrix Transpose
 
-Because we are dealing with a 2D matrix, it is more natural to let threads and thread blocks structured in a 2D manner. Each thread blocks is responsible for transposing a small matrix patch of the big matrix. Given that the whole big matrix is a square matrix, the patch is also square. As tested, having each thread transposing 2 element is the most efficient configuration. Also take into account that it is efficient to have about 256 total # of threads in a thread block, I set the matrix patch size to 32 * 32. Accordingly, the block size is 32 * 16 * 1. 
+Because we are dealing with a 2D matrix, it is more natural to let threads and thread blocks structured in a 2D manner. Each thread blocks is responsible for transposing a small matrix patch of the big matrix. Given that the whole big matrix is a square matrix, the patch is also square. 
+
+Instead of using $1$ thread to transpose $1$ elements, I decide to let $1$ thread deal with multiple elements. This approach is kind of similar to the cascading one in the reduction part. As tested, having each thread transposing $8$ element is the most efficient configuration. Also take into account that it is efficient to have about 256 total # of threads in a thread block, I set the matrix patch size to 32 * 32. Accordingly, the block size is 32 * 4 * 1. To deal with the case when $N$ is not devisable by $32$, I $ceil$ the # of thread blocks needed. 
 
 I firstly wrote a intuitive approach. Thread blocks directly save an element in the input memory to its corresponding position of the output memory. Only one of the read/write operation toward the global memory could be coalesced. 
 
