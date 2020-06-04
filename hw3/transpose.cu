@@ -14,22 +14,35 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
-	int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
-	int inc = BLOCK_DIM_Y * N;
+	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
+	//int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
+	//int inc = BLOCK_DIM_Y * N;
 	int i;
 
-	for (i = 0; i < PATCH_DIM && base + x < N * N; i += BLOCK_DIM_Y, base += inc) {
-		scratch[threadIdx.y + i][threadIdx.x] = A[base + x]; 
+	if (x < N){
+		if (y < N){
+			scratch[threadIdx.y + i][threadIdx.x] = A[y * N + x]; 
+		}
+		y += BLOCK_DIM_Y;
+		if (y < N){
+			scratch[threadIdx.y + i][threadIdx.x] = A[y * N + x]; 			
+		}
 	}
 
-	x = PATCH_DIM * blockIdx.y + threadIdx.x;
-	base = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
+	x = blockIdx.y * PATCH_DIM + threadIdx.x;
+	y = blockIdx.x * PATCH_DIM + threadIdx.y;
+	//base = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
 
 	__syncthreads();
- 
-	for (i = 0; i < PATCH_DIM && base + x < N * N; i += BLOCK_DIM_Y, base += inc) {
-		AT[base + x] = scratch[threadIdx.x][threadIdx.y + i];
+
+	if (x < N && y < N){
+		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + i];		
 	}
+	y += BLOCK_DIM_Y;
+	if (x < N && y < N){
+		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + i];		
+	}
+
 }
 
 
