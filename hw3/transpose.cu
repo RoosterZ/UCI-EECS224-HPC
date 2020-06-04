@@ -6,7 +6,7 @@
 
 typedef float dtype;
 
-#define BLOCK_DIM_Y 8
+#define BLOCK_DIM_Y 4
 #define PATCH_DIM 32
 
 __global__ 
@@ -15,8 +15,6 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
-	//int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
-	//int inc = BLOCK_DIM_Y * N;
 	
 	int i;
 	if (x < N){
@@ -25,20 +23,8 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 		}
 	}
 
-
-	// if (x < N){
-	// 	if (y < N){
-	// 		scratch[threadIdx.y][threadIdx.x] = A[y * N + x]; 
-	// 	}
-	// 	y += BLOCK_DIM_Y;
-	// 	if (y < N){
-	// 		scratch[threadIdx.y + BLOCK_DIM_Y][threadIdx.x] = A[y * N + x]; 			
-	// 	}	
-	// }
-
 	x = blockIdx.y * PATCH_DIM + threadIdx.x;
 	y = blockIdx.x * PATCH_DIM + threadIdx.y;
-	//base = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
 
 	__syncthreads();
 
@@ -48,17 +34,6 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 		}
 	}
 
-
-	// if (x < N){
-	// 	if (y < N){
-	// 		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y];		
-	// 	}
-	// 	y += BLOCK_DIM_Y;
-	// 	if (y < N){
-	// 		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + BLOCK_DIM_Y];		
-	// 	}
-	
-	// }
 }
 
 
