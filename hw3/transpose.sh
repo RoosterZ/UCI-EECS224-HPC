@@ -34,14 +34,14 @@ echo ""
 echo "=== Running 3 trials of transpose (19)... ==="
 for trial in 1 2 3; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 19
+  ./transpose 2048
 done
 
 echo ""
 echo "=== Running 3 trials of transpose (1024)... ==="
 for trial in 1 2 3; do 
   echo "*** Trial ${trial} ***"
-  ./transpose 1024
+  ./transpose 4096
 done
 
 echo ""
