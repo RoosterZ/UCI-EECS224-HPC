@@ -17,15 +17,15 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
 	//int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
 	//int inc = BLOCK_DIM_Y * N;
-	int i;
+	//int i;
 
 	if (x < N){
 		if (y < N){
-			scratch[threadIdx.y + i][threadIdx.x] = A[y * N + x]; 
+			scratch[threadIdx.y][threadIdx.x] = A[y * N + x]; 
 		}
 		y += BLOCK_DIM_Y;
 		if (y < N){
-			scratch[threadIdx.y + i][threadIdx.x] = A[y * N + x]; 			
+			scratch[threadIdx.y + BLOCK_DIM_Y][threadIdx.x] = A[y * N + x]; 			
 		}
 	}
 
@@ -36,11 +36,11 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	__syncthreads();
 
 	if (x < N && y < N){
-		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + i];		
+		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y];		
 	}
 	y += BLOCK_DIM_Y;
 	if (x < N && y < N){
-		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + i];		
+		AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + BLOCK_DIM_Y];		
 	}
 
 }
