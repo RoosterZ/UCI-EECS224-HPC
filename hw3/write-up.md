@@ -52,9 +52,11 @@ Then I check Nvidia documentation for Compute Capability 2.0 (The Compute Capabi
 
 With this improved approach where both read and write to global memory are coalesced, I achieved about $13.5$ billion elements/sec bandwidth with $N = 2048$. 
 
-| N                                  | 1024  | 2048  | 4096  |
-| ---------------------------------- | ----- | ----- | ----- |
-| Bandwidth (Billion elements / sec) | 10.74 | 13.53 | 14.30 |
+Previous performance are tested on $gpu$ queue. Finally, I test its performance on $gpu2$ queue with different matrix size $N$: 
 
-Above is the test result (with different matrix size $N$) for this final optimized version of matrix transpose. As is shown, as the matrix size grows, effective bandwidth also grows because the overhead (probably comes from thread synchronization) is amortized. 
+| N                                  | 1000 | 2000 | 4000 |
+| ---------------------------------- | ---- | ---- | ---- |
+| Bandwidth (Billion elements / sec) | 2.3  | 16.5 | 19.3 |
+
+As is shown, as the matrix size grows, effective bandwidth also grows because the overhead (probably comes from thread synchronization) is amortized. 
 

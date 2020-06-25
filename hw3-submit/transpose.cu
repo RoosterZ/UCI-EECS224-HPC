@@ -6,7 +6,7 @@
 
 typedef float dtype;
 
-#define BLOCK_DIM_Y 16
+#define BLOCK_DIM_Y 4
 #define PATCH_DIM 32
 
 __global__ 
@@ -14,22 +14,26 @@ void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
 	__shared__ dtype scratch[PATCH_DIM][PATCH_DIM+1];
 	int x = blockIdx.x * PATCH_DIM + threadIdx.x;
-	int base = N * (blockIdx.y * PATCH_DIM + threadIdx.y);
-	int inc = BLOCK_DIM_Y * N;
+	int y = blockIdx.y * PATCH_DIM + threadIdx.y;
+	
 	int i;
-
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
-		scratch[threadIdx.y + i][threadIdx.x] = A[base + x]; 
+	if (x < N){
+		for (i = 0; i < PATCH_DIM && y < N; i += BLOCK_DIM_Y, y += BLOCK_DIM_Y){
+			scratch[threadIdx.y + i][threadIdx.x] = A[y * N + x]; 	
+		}
 	}
 
-	x = PATCH_DIM * blockIdx.y + threadIdx.x;
-	base = N * (blockIdx.x * PATCH_DIM + threadIdx.y);
+	x = blockIdx.y * PATCH_DIM + threadIdx.x;
+	y = blockIdx.x * PATCH_DIM + threadIdx.y;
 
 	__syncthreads();
- 
-	for (i = 0; i < PATCH_DIM; i += BLOCK_DIM_Y, base += inc) {
-		AT[base + x] = scratch[threadIdx.x][threadIdx.y + i];
+
+	if (x < N){
+		for (i = 0; i < PATCH_DIM && y < N; i += BLOCK_DIM_Y, y += BLOCK_DIM_Y){
+			AT[y * N + x] = scratch[threadIdx.x][threadIdx.y + i] ; 	
+		}
 	}
+
 }
 
 
@@ -90,7 +94,7 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 	CUDA_CHECK_ERROR (cudaMemcpy (d_idata, A, N * N * sizeof (dtype), 
 	cudaMemcpyHostToDevice));
 
-	dim3 gb(N / PATCH_DIM, N / PATCH_DIM, 1);
+	dim3 gb((N + PATCH_DIM - 1 / PATCH_DIM), (N + PATCH_DIM - 1) / PATCH_DIM, 1);
 	dim3 tb(PATCH_DIM, BLOCK_DIM_Y, 1);
 	matTrans <<<gb, tb>>> (d_odata, d_idata, N);
 
