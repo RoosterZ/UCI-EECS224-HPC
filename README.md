@@ -4,22 +4,21 @@ Codes of three homework assignments from UCI course EECS224: High Performance Co
 
 Three assignments are related to three different topics in parallel computing: 
 
-+ Homework 1
+### Homework 1
 
-  OpenMP
+OpenMP
 
-  CPU - Shared memory model
+CPU - Shared memory model
 
-+ Homework 2
+### Homework 2
 
-  MPI
+MPI
 
-  CPU - Message passing model
+CPU - Message passing model
 
-+ Homework 3
+### Homework 3
 
-  CUDA
+CUDA
 
-  GPU
+GPU
 
-  
